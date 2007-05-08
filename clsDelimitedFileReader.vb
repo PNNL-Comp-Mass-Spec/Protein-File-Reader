@@ -24,7 +24,7 @@ Option Strict On
 ' this computer software.
 
 '
-' Last modified July 12, 2005
+' Last modified January 9, 2007
 
 Public Class DelimitedFileReader
     Inherits ProteinFileReaderBaseClass
@@ -51,7 +51,6 @@ Public Class DelimitedFileReader
     Private mDelimitedFileFormatCode As eDelimitedFileFormatCode
     Private mSkipFirstLine As Boolean
     Private mFirstLineSkipped As Boolean
-
 #End Region
 
 #Region "Interface Functions"
@@ -128,9 +127,10 @@ Public Class DelimitedFileReader
     End Sub
 
     Public Overrides Function ReadNextProteinEntry() As Boolean
-        ' Reads the next entry in delimited protein file
+        ' Reads the next entry in delimited protein (or delimited peptide) file
         ' Returns true if an entry is found, otherwise, returns false
-        ' This function should also be called if reading a delimited file of peptides
+        '
+        ' Note that this function will update variable mFileLineSkipCount if any lines are skipped due to having an invalid format
 
         Const MAX_SPLIT_LINE_COUNT As Integer = 8
         Dim strLineIn As String
@@ -140,6 +140,8 @@ Public Class DelimitedFileReader
         Dim blnEntryFound As Boolean
 
         blnEntryFound = False
+        mFileLineSkipCount = 0
+
         If Not mProteinFileInputStream Is Nothing Then
 
             Try
@@ -280,6 +282,10 @@ Public Class DelimitedFileReader
                                 Debug.Assert(False, "Unknown file format code: " & mDelimitedFileFormatCode.ToString)
                                 blnEntryFound = False
                         End Select
+
+                        If Not blnEntryFound Then
+                            mFileLineSkipCount += 1
+                        End If
 
                     End If
                 Loop

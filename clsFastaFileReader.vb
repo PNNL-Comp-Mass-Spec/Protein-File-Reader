@@ -24,7 +24,7 @@ Option Strict On
 ' this computer software.
 
 '
-' Last modified November 20, 2004
+' Last modified January 9, 2007
 
 Public Class FastaFileReader
     Inherits ProteinFileReaderBaseClass
@@ -172,6 +172,8 @@ Public Class FastaFileReader
         End With
 
         blnProteinEntryFound = False
+        mFileLineSkipCount = 0                  ' This is always 0 for Fasta files
+
         If Not mProteinFileInputStream Is Nothing Then
 
             Try

@@ -27,7 +27,7 @@ Option Strict On
 Public MustInherit Class ProteinFileReaderBaseClass
 
     Public Sub New()
-        mClassVersionDate = "July 12, 2005"
+        mClassVersionDate = "January 9, 2007"
         InitializeLocalVariables()
     End Sub
 
@@ -56,6 +56,7 @@ Public MustInherit Class ProteinFileReaderBaseClass
     Private mFileOpen As Boolean
     Protected mFileBytesRead As Long
     Protected mFileLinesRead As Integer
+    Protected mFileLineSkipCount As Integer
 
     Private mClassVersionDate As String
 #End Region
@@ -71,6 +72,12 @@ Public MustInherit Class ProteinFileReaderBaseClass
     Public ReadOnly Property LinesRead() As Integer
         Get
             Return mFileLinesRead
+        End Get
+    End Property
+
+    Public ReadOnly Property LineSkipCount() As Integer
+        Get
+            Return mFileLineSkipCount
         End Get
     End Property
 
@@ -163,9 +170,7 @@ Public MustInherit Class ProteinFileReaderBaseClass
     End Sub
 
     Private Sub InitializeLocalVariables()
-
         EraseProteinEntry(mCurrentEntry)
-
     End Sub
 
     Public Overridable Function OpenFile(ByVal strInputFilePath As String) As Boolean
@@ -181,6 +186,7 @@ Public MustInherit Class ProteinFileReaderBaseClass
                 mFileOpen = True
                 mFileBytesRead = 0
                 mFileLinesRead = 0
+                mFileLineSkipCount = 0
                 blnSuccess = True
             End If
         Catch ex As Exception

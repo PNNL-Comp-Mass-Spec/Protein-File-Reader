@@ -1,5 +1,10 @@
 ProteinFileReader.dll Change Log
 
+Version 1.0.2565; January 9, 2007
+	- Added property LineSkipCount
+		- This value is only updated when reading Delimited files
+		- It is reset to 0 each time ReadNextProteinEntry is called, but will be incremented if 1 or more non-blank lines are skipped due to having an incorrect format
+
 Version 1.0.2284; April 3, 2006
 	- Recompiled with updated copyright messages
 
