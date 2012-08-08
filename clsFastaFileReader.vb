@@ -177,55 +177,55 @@ Public Class FastaFileReader
         If Not mProteinFileInputStream Is Nothing Then
 
             Try
-                Do While Not blnProteinEntryFound And mProteinFileInputStream.Peek() >= 0
-                    If Not mNextEntry.HeaderLine Is Nothing AndAlso mNextEntry.HeaderLine.Length > 0 Then
-                        strLineIn = mNextEntry.HeaderLine
-                    Else
-                        strLineIn = mProteinFileInputStream.ReadLine
-                        If Not strLineIn Is Nothing AndAlso strLineIn.Trim.Length > 0 Then
-                            mFileBytesRead += strLineIn.Length + 2
-                            mFileLinesRead += 1
-                        End If
-                    End If
+				Do While Not blnProteinEntryFound And mProteinFileInputStream.Peek() > -1
+					If Not mNextEntry.HeaderLine Is Nothing AndAlso mNextEntry.HeaderLine.Length > 0 Then
+						strLineIn = mNextEntry.HeaderLine
+					Else
+						strLineIn = mProteinFileInputStream.ReadLine
+						If Not strLineIn Is Nothing AndAlso strLineIn.Trim.Length > 0 Then
+							mFileBytesRead += strLineIn.Length + 2
+							mFileLinesRead += 1
+						End If
+					End If
 
 
-                    If Not strLineIn Is Nothing AndAlso strLineIn.Trim.Length > 0 Then
-                        strLineIn = strLineIn.Trim
+					If Not strLineIn Is Nothing AndAlso strLineIn.Trim.Length > 0 Then
+						strLineIn = strLineIn.Trim
 
-                        ' See if strLineIn starts with the protein header start character
-                        If strLineIn.StartsWith(mProteinLineStartChar) Then
-                            With mCurrentEntry
-                                .HeaderLine = strLineIn
-                                .Name = ExtractAccessionNameFromHeader(strLineIn)
-                                .Description = ExtractDescriptionFromHeader(strLineIn)
-                                .Sequence = String.Empty
-                            End With
-                            blnProteinEntryFound = True
+						' See if strLineIn starts with the protein header start character
+						If strLineIn.StartsWith(mProteinLineStartChar) Then
+							With mCurrentEntry
+								.HeaderLine = strLineIn
+								.Name = ExtractAccessionNameFromHeader(strLineIn)
+								.Description = ExtractDescriptionFromHeader(strLineIn)
+								.Sequence = String.Empty
+							End With
+							blnProteinEntryFound = True
 
-                            ' Now continue reading until the next protein header start character is found
-                            Do While mProteinFileInputStream.Peek() >= 0
-                                strLineIn = mProteinFileInputStream.ReadLine
+							' Now continue reading until the next protein header start character is found
+							Do While mProteinFileInputStream.Peek() > -1
+								strLineIn = mProteinFileInputStream.ReadLine
 
-                                If Not strLineIn Is Nothing AndAlso strLineIn.Trim.Length > 0 Then
-                                    mFileBytesRead += strLineIn.Length + 2
-                                    mFileLinesRead += 1
+								If Not strLineIn Is Nothing AndAlso strLineIn.Trim.Length > 0 Then
+									mFileBytesRead += strLineIn.Length + 2
+									mFileLinesRead += 1
 
-                                    strLineIn = strLineIn.Trim
+									strLineIn = strLineIn.Trim
 
-                                    If strLineIn.StartsWith(mProteinLineStartChar) Then
-                                        ' Found the next protein entry
-                                        ' Store in mNextEntry and jump out of the loop
-                                        mNextEntry.HeaderLine = strLineIn
-                                        Exit Do
-                                    Else
-                                        mCurrentEntry.Sequence &= strLineIn
-                                    End If
-                                End If
-                            Loop
+									If strLineIn.StartsWith(mProteinLineStartChar) Then
+										' Found the next protein entry
+										' Store in mNextEntry and jump out of the loop
+										mNextEntry.HeaderLine = strLineIn
+										Exit Do
+									Else
+										mCurrentEntry.Sequence &= strLineIn
+									End If
+								End If
+							Loop
 
-                        End If
-                    End If
-                Loop
+						End If
+					End If
+				Loop
 
             Catch ex As Exception
                 ' Error reading the input file

@@ -126,6 +126,11 @@ Public Class DelimitedFileReader
 
     End Sub
 
+	Protected Function IsNumber(ByVal strText As String) As Boolean
+		Dim dblValue As Double
+		Return Double.TryParse(strText, dblValue)
+	End Function
+
     Public Overrides Function ReadNextProteinEntry() As Boolean
         ' Reads the next entry in delimited protein (or delimited peptide) file
         ' Returns true if an entry is found, otherwise, returns false
@@ -148,147 +153,147 @@ Public Class DelimitedFileReader
                 If mSkipFirstLine And Not mFirstLineSkipped Then
                     mFirstLineSkipped = True
 
-                    If mProteinFileInputStream.Peek() >= 0 Then
-                        strLineIn = mProteinFileInputStream.ReadLine
+					If mProteinFileInputStream.Peek() > -1 Then
+						strLineIn = mProteinFileInputStream.ReadLine
 
-                        If Not strLineIn Is Nothing AndAlso strLineIn.Trim.Length > 0 Then
-                            mFileBytesRead += strLineIn.Length + 2
-                            mFileLinesRead += 1
-                        End If
-                    End If
+						If Not strLineIn Is Nothing AndAlso strLineIn.Trim.Length > 0 Then
+							mFileBytesRead += strLineIn.Length + 2
+							mFileLinesRead += 1
+						End If
+					End If
                 End If
 
                 ' Read the file until the next valid line is found
-                Do While Not blnEntryFound And mProteinFileInputStream.Peek() >= 0
-                    strLineIn = mProteinFileInputStream.ReadLine
+				Do While Not blnEntryFound And mProteinFileInputStream.Peek() > -1
+					strLineIn = mProteinFileInputStream.ReadLine
 
-                    If Not strLineIn Is Nothing AndAlso strLineIn.Trim.Length > 0 Then
-                        mFileBytesRead += strLineIn.Length + 2
-                        mFileLinesRead += 1
+					If Not strLineIn Is Nothing AndAlso strLineIn.Trim.Length > 0 Then
+						mFileBytesRead += strLineIn.Length + 2
+						mFileLinesRead += 1
 
-                        strLineIn = strLineIn.Trim
-                        strSplitLine = strLineIn.Split(strSepChars, MAX_SPLIT_LINE_COUNT)
+						strLineIn = strLineIn.Trim
+						strSplitLine = strLineIn.Split(strSepChars, MAX_SPLIT_LINE_COUNT)
 
-                        EraseProteinEntry(mCurrentEntry)
+						EraseProteinEntry(mCurrentEntry)
 
-                        Select Case mDelimitedFileFormatCode
-                            Case eDelimitedFileFormatCode.SequenceOnly
-                                If strSplitLine.Length >= 1 Then
-                                    ' Only process the line if the sequence column is not a number (useful for handling incorrect file formats)
-                                    If Not IsNumeric(strSplitLine(0)) Then
-                                        With mCurrentEntry
-                                            .HeaderLine = strLineIn
-                                            .Name = String.Empty
-                                            .Description = String.Empty
-                                            .Sequence = strSplitLine(0)
-                                        End With
-                                        blnEntryFound = True
-                                    End If
-                                End If
+						Select Case mDelimitedFileFormatCode
+							Case eDelimitedFileFormatCode.SequenceOnly
+								If strSplitLine.Length >= 1 Then
+									' Only process the line if the sequence column is not a number (useful for handling incorrect file formats)
+									If Not IsNumber(strSplitLine(0)) Then
+										With mCurrentEntry
+											.HeaderLine = strLineIn
+											.Name = String.Empty
+											.Description = String.Empty
+											.Sequence = strSplitLine(0)
+										End With
+										blnEntryFound = True
+									End If
+								End If
 
-                            Case eDelimitedFileFormatCode.ProteinName_Sequence
-                                If strSplitLine.Length >= 2 Then
-                                    ' Only process the line if the sequence column is not a number (useful for handling incorrect file formats)
-                                    If Not IsNumeric(strSplitLine(1)) Then
-                                        With mCurrentEntry
-                                            .HeaderLine = strLineIn
-                                            .Name = strSplitLine(0)
-                                            .Description = String.Empty
-                                            .Sequence = strSplitLine(1)
-                                        End With
-                                        blnEntryFound = True
-                                    End If
-                                End If
-                            Case eDelimitedFileFormatCode.ProteinName_Description_Sequence
-                                If strSplitLine.Length >= 3 Then
-                                    ' Only process the line if the sequence column is not a number (useful for handling incorrect file formats)
-                                    If Not IsNumeric(strSplitLine(2)) Then
-                                        With mCurrentEntry
-                                            .HeaderLine = strLineIn
-                                            .Name = strSplitLine(0)
-                                            .Description = strSplitLine(1)
-                                            .Sequence = strSplitLine(2)
-                                        End With
-                                        blnEntryFound = True
-                                    End If
-                                End If
-                            Case eDelimitedFileFormatCode.UniqueID_Sequence, eDelimitedFileFormatCode.UniqueID_Sequence_Mass_NET
-                                If strSplitLine.Length >= 2 Then
-                                    ' Only process the line if the first column is numeric (useful for skipping header lines)
-                                    ' Also require that the sequence column is not a number
-                                    If IsNumeric(strSplitLine(0)) And Not IsNumeric(strSplitLine(1)) Then
-                                        With mCurrentEntry
-                                            .HeaderLine = strLineIn
-                                            .Name = String.Empty
-                                            .Description = String.Empty
-                                            .Sequence = strSplitLine(1)
-                                            Try
-                                                .UniqueID = Integer.Parse(strSplitLine(0))
-                                            Catch ex As Exception
-                                                .UniqueID = 0
-                                            End Try
+							Case eDelimitedFileFormatCode.ProteinName_Sequence
+								If strSplitLine.Length >= 2 Then
+									' Only process the line if the sequence column is not a number (useful for handling incorrect file formats)
+									If Not IsNumber(strSplitLine(1)) Then
+										With mCurrentEntry
+											.HeaderLine = strLineIn
+											.Name = strSplitLine(0)
+											.Description = String.Empty
+											.Sequence = strSplitLine(1)
+										End With
+										blnEntryFound = True
+									End If
+								End If
+							Case eDelimitedFileFormatCode.ProteinName_Description_Sequence
+								If strSplitLine.Length >= 3 Then
+									' Only process the line if the sequence column is not a number (useful for handling incorrect file formats)
+									If Not IsNumber(strSplitLine(2)) Then
+										With mCurrentEntry
+											.HeaderLine = strLineIn
+											.Name = strSplitLine(0)
+											.Description = strSplitLine(1)
+											.Sequence = strSplitLine(2)
+										End With
+										blnEntryFound = True
+									End If
+								End If
+							Case eDelimitedFileFormatCode.UniqueID_Sequence, eDelimitedFileFormatCode.UniqueID_Sequence_Mass_NET
+								If strSplitLine.Length >= 2 Then
+									' Only process the line if the first column is numeric (useful for skipping header lines)
+									' Also require that the sequence column is not a number
+									If IsNumber(strSplitLine(0)) And Not IsNumber(strSplitLine(1)) Then
+										With mCurrentEntry
+											.HeaderLine = strLineIn
+											.Name = String.Empty
+											.Description = String.Empty
+											.Sequence = strSplitLine(1)
+											Try
+												.UniqueID = Integer.Parse(strSplitLine(0))
+											Catch ex As Exception
+												.UniqueID = 0
+											End Try
 
-                                            If strSplitLine.Length >= 4 Then
-                                                Try
-                                                    .Mass = Double.Parse(strSplitLine(2))
-                                                Catch ex As Exception
-                                                End Try
+											If strSplitLine.Length >= 4 Then
+												Try
+													.Mass = Double.Parse(strSplitLine(2))
+												Catch ex As Exception
+												End Try
 
-                                                Try
-                                                    .NET = Single.Parse(strSplitLine(3))
-                                                Catch ex As Exception
-                                                End Try
-                                            End If
-                                        End With
-                                        blnEntryFound = True
-                                    End If
-                                End If
-                            Case eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID, eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET, eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET_NETStDev_DiscriminantScore
-                                If strSplitLine.Length >= 3 Then
-                                    ' Only process the line if the third column is numeric (useful for skipping header lines)
-                                    ' Also require that the sequence column is not a number
-                                    If IsNumeric(strSplitLine(2)) And Not IsNumeric(strSplitLine(1)) Then
-                                        With mCurrentEntry
-                                            .HeaderLine = strLineIn
-                                            .Name = strSplitLine(0)
-                                            .Description = String.Empty
-                                            .Sequence = strSplitLine(1)
-                                            Try
-                                                .UniqueID = Integer.Parse(strSplitLine(2))
-                                            Catch ex As Exception
-                                                .UniqueID = 0
-                                            End Try
+												Try
+													.NET = Single.Parse(strSplitLine(3))
+												Catch ex As Exception
+												End Try
+											End If
+										End With
+										blnEntryFound = True
+									End If
+								End If
+							Case eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID, eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET, eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET_NETStDev_DiscriminantScore
+								If strSplitLine.Length >= 3 Then
+									' Only process the line if the third column is numeric (useful for skipping header lines)
+									' Also require that the sequence column is not a number
+									If IsNumber(strSplitLine(2)) And Not IsNumber(strSplitLine(1)) Then
+										With mCurrentEntry
+											.HeaderLine = strLineIn
+											.Name = strSplitLine(0)
+											.Description = String.Empty
+											.Sequence = strSplitLine(1)
+											Try
+												.UniqueID = Integer.Parse(strSplitLine(2))
+											Catch ex As Exception
+												.UniqueID = 0
+											End Try
 
-                                            If strSplitLine.Length >= 5 Then
-                                                Try
-                                                    .Mass = Double.Parse(strSplitLine(3))
-                                                    .NET = Single.Parse(strSplitLine(4))
-                                                Catch ex As Exception
-                                                End Try
+											If strSplitLine.Length >= 5 Then
+												Try
+													.Mass = Double.Parse(strSplitLine(3))
+													.NET = Single.Parse(strSplitLine(4))
+												Catch ex As Exception
+												End Try
 
-                                                If strSplitLine.Length >= 7 Then
-                                                    Try
-                                                        .NETStDev = Single.Parse(strSplitLine(5))
-                                                        .DiscriminantScore = Single.Parse(strSplitLine(6))
-                                                    Catch ex As Exception
-                                                    End Try
-                                                End If
-                                            End If
-                                        End With
-                                        blnEntryFound = True
-                                    End If
-                                End If
-                            Case Else
-                                Debug.Assert(False, "Unknown file format code: " & mDelimitedFileFormatCode.ToString)
-                                blnEntryFound = False
-                        End Select
+												If strSplitLine.Length >= 7 Then
+													Try
+														.NETStDev = Single.Parse(strSplitLine(5))
+														.DiscriminantScore = Single.Parse(strSplitLine(6))
+													Catch ex As Exception
+													End Try
+												End If
+											End If
+										End With
+										blnEntryFound = True
+									End If
+								End If
+							Case Else
+								Debug.Assert(False, "Unknown file format code: " & mDelimitedFileFormatCode.ToString)
+								blnEntryFound = False
+						End Select
 
-                        If Not blnEntryFound Then
-                            mFileLineSkipCount += 1
-                        End If
+						If Not blnEntryFound Then
+							mFileLineSkipCount += 1
+						End If
 
-                    End If
-                Loop
+					End If
+				Loop
 
             Catch ex As Exception
                 ' Error reading the input file

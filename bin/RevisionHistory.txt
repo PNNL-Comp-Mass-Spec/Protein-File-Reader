@@ -1,5 +1,8 @@
 ProteinFileReader.dll Change Log
 
+Version 1.2.4603; August 8, 2012
+	- Updated to Visual Studio 2010 (.NET 4.0)
+
 Version 1.1.3847; July 14, 2010
 	- Updated to Visual Studio 2008 (.NET 2.0)
 
