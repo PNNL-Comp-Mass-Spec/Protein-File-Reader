@@ -1,5 +1,8 @@
 ProteinFileReader.dll Change Log
 
+Version 1.2.4834; March 27, 2013
+	- Switched to AnyCPU
+
 Version 1.2.4603; August 8, 2012
 	- Updated to Visual Studio 2010 (.NET 4.0)
 
