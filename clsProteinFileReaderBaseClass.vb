@@ -182,16 +182,31 @@ Public MustInherit Class ProteinFileReaderBaseClass
         Try
             If CloseFile() Then
                 ioInStream = New System.IO.FileStream(strInputFilePath, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
-                mProteinFileInputStream = New System.IO.StreamReader(ioInStream)
-                mFileOpen = True
-                mFileBytesRead = 0
-                mFileLinesRead = 0
-                mFileLineSkipCount = 0
-                blnSuccess = True
-            End If
-        Catch ex As Exception
-            blnSuccess = False
+				mProteinFileInputStream = New System.IO.StreamReader(ioInStream)
+				blnSuccess = True
+			End If
+		Catch ex As System.IO.IOException
+
+			Try
+				' Try again, this time allowing for read/write access
+				ioInStream = New System.IO.FileStream(strInputFilePath, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.ReadWrite)
+				mProteinFileInputStream = New System.IO.StreamReader(ioInStream)
+				blnSuccess = True
+
+			Catch ex2 As Exception
+				blnSuccess = False
+			End Try
+
+		Catch ex As Exception
+			blnSuccess = False
         End Try
+
+		If blnSuccess Then
+			mFileOpen = True
+			mFileBytesRead = 0
+			mFileLinesRead = 0
+			mFileLineSkipCount = 0			
+		End If
 
         Return blnSuccess
 
