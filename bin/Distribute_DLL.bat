@@ -35,7 +35,7 @@ xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\Protein_Coverag
 xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\Protein_Digestion_Simulator\bin\ProteinFileReader.dll" /Y
 xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\Protein_Digestion_Simulator\Lib\ProteinFileReader.dll" /Y
 xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\Protein_Digestion_Simulator\Unused\bin\ProteinFileReader.dll" /Y
-xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\Protein_Sequence_Motif_Extractor\bin\ProteinFileReader.dll" /Y
+rem xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\Protein_Sequence_Motif_Extractor\bin\ProteinFileReader.dll" /Y
 rem Still .NET 2: xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\Residue_Frequency_Summarizer\bin\ProteinFileReader.dll" /Y
 rem Still .NET 2: xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\Reverse_Text\bin\ProteinFileReader.dll" /Y
 pause
