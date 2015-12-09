@@ -13,22 +13,14 @@ Option Strict On
 ' Licensed under the Apache License, Version 2.0; you may not use this file except
 ' in compliance with the License.  You may obtain a copy of the License at 
 ' http://www.apache.org/licenses/LICENSE-2.0
-'
-' Notice: This computer software was prepared by Battelle Memorial Institute, 
-' hereinafter the Contractor, under Contract No. DE-AC05-76RL0 1830 with the 
-' Department of Energy (DOE).  All rights in the computer software are reserved 
-' by DOE on behalf of the United States Government and the Contractor as 
-' provided in the Contract.  NEITHER THE GOVERNMENT NOR THE CONTRACTOR MAKES ANY 
-' WARRANTY, EXPRESS OR IMPLIED, OR ASSUMES ANY LIABILITY FOR THE USE OF THIS 
-' SOFTWARE.  This notice including this sentence must appear on any copies of 
-' this computer software.
-
-'
-' Last modified January 9, 2007
 
 Public Class FastaFileReader
     Inherits ProteinFileReaderBaseClass
 
+    ''' <summary>
+    ''' Constructor
+    ''' </summary>
+    ''' <remarks></remarks>
     Public Sub New()
         InitializeLocalVariables()
     End Sub
@@ -49,27 +41,31 @@ Public Class FastaFileReader
 
 #Region "Interface Functions"
 
+    ''' <summary>
+    ''' Header line (protein name and description), without the start character (&lt;)
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Public Overloads ReadOnly Property HeaderLine() As String
         Get
-            Return HeaderLine(False)
+            Return GetHeaderLine(False)
         End Get
     End Property
 
+    <Obsolete("Use method GetHeaderLine")>
     Public Overloads ReadOnly Property HeaderLine(ByVal blnIncludeStartChar As Boolean) As String
         Get
-            Try
-                If Not blnIncludeStartChar AndAlso mCurrentEntry.HeaderLine.StartsWith(mProteinLineStartChar) Then
-                    ' Remove the > character from the start of the line
-                    Return mCurrentEntry.HeaderLine.TrimStart(mProteinLineStartChar).Trim
-                Else
-                    Return mCurrentEntry.HeaderLine
-                End If
-            Catch ex As Exception
-                Return mCurrentEntry.HeaderLine
-            End Try
+            Return GetHeaderLine(blnIncludeStartChar)
         End Get
     End Property
 
+    ''' <summary>
+    ''' Character that precedes each header line (the line with the protein name and description)
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Public Property ProteinLineStartChar() As Char
         Get
             Return mProteinLineStartChar
@@ -81,6 +77,12 @@ Public Class FastaFileReader
         End Set
     End Property
 
+    ''' <summary>
+    ''' The character that follows the protein name; always a space
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Public Property ProteinLineAccessionEndChar() As Char
         Get
             Return mProteinLineAccessionEndChar
@@ -101,12 +103,12 @@ Public Class FastaFileReader
         Try
             If strHeaderLine.StartsWith(mProteinLineStartChar) Then
                 ' Remove the > character from the start of the line
-                strHeaderLine = strHeaderLine.TrimStart(mProteinLineStartChar).Trim
+                strHeaderLine = strHeaderLine.TrimStart(mProteinLineStartChar).Trim()
             End If
 
             intCharLoc = strHeaderLine.IndexOf(mProteinLineAccessionEndChar)
             If intCharLoc > 0 Then
-                strDescription = strHeaderLine.Substring(intCharLoc + 1).Trim
+                strDescription = strHeaderLine.Substring(intCharLoc + 1).Trim()
             Else
                 strDescription = strHeaderLine
             End If
@@ -127,12 +129,12 @@ Public Class FastaFileReader
         Try
             If strHeaderLine.StartsWith(mProteinLineStartChar) Then
                 ' Remove the > character from the start of the line
-                strHeaderLine = strHeaderLine.TrimStart(mProteinLineStartChar).Trim
+                strHeaderLine = strHeaderLine.TrimStart(mProteinLineStartChar).Trim()
             End If
 
             intCharLoc = strHeaderLine.IndexOf(mProteinLineAccessionEndChar)
             If intCharLoc > 0 Then
-                strAccessionName = strHeaderLine.Substring(0, intCharLoc).Trim
+                strAccessionName = strHeaderLine.Substring(0, intCharLoc).Trim()
             Else
                 strAccessionName = strHeaderLine
             End If
@@ -142,6 +144,25 @@ Public Class FastaFileReader
 
         Return strAccessionName
 
+    End Function
+
+    ''' <summary>
+    ''' Header line (protein name and description)
+    ''' </summary>
+    ''' <param name="includeStartChar">If true then include the start character (&lt;)</param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Public Function GetHeaderLine(includeStartChar As Boolean) As String
+        Try
+            If Not includeStartChar AndAlso mCurrentEntry.HeaderLine.StartsWith(mProteinLineStartChar) Then
+                ' Remove the > character from the start of the line
+                Return mCurrentEntry.HeaderLine.TrimStart(mProteinLineStartChar).Trim()
+            Else
+                Return mCurrentEntry.HeaderLine
+            End If
+        Catch ex As Exception
+            Return mCurrentEntry.HeaderLine
+        End Try
     End Function
 
     Private Sub InitializeLocalVariables()
@@ -157,9 +178,12 @@ Public Class FastaFileReader
 
     End Sub
 
+    ''' <summary>
+    ''' Reads the next entry in a Fasta file
+    ''' </summary>
+    ''' <returns>True if an entry is found, otherwise false</returns>
+    ''' <remarks></remarks>
     Public Overrides Function ReadNextProteinEntry() As Boolean
-        ' Reads the next entry in a Fasta file
-        ' Returns true if an entry is found, otherwise, returns false
 
         Dim strLineIn As String
         Dim blnProteinEntryFound As Boolean
@@ -177,55 +201,55 @@ Public Class FastaFileReader
         If Not mProteinFileInputStream Is Nothing Then
 
             Try
-				Do While Not blnProteinEntryFound And mProteinFileInputStream.Peek() > -1
-					If Not mNextEntry.HeaderLine Is Nothing AndAlso mNextEntry.HeaderLine.Length > 0 Then
-						strLineIn = mNextEntry.HeaderLine
-					Else
-						strLineIn = mProteinFileInputStream.ReadLine
-						If Not strLineIn Is Nothing AndAlso strLineIn.Trim.Length > 0 Then
-							mFileBytesRead += strLineIn.Length + 2
-							mFileLinesRead += 1
-						End If
-					End If
+                Do While Not blnProteinEntryFound AndAlso Not mProteinFileInputStream.EndOfStream
+                    If Not String.IsNullOrWhiteSpace(mNextEntry.HeaderLine) Then
+                        strLineIn = mNextEntry.HeaderLine
+                    Else
+                        strLineIn = mProteinFileInputStream.ReadLine()
+                        If Not String.IsNullOrWhiteSpace(strLineIn) Then
+                            mFileBytesRead += strLineIn.Length + 2
+                            mFileLinesRead += 1
+                        End If
+                    End If
 
 
-					If Not strLineIn Is Nothing AndAlso strLineIn.Trim.Length > 0 Then
-						strLineIn = strLineIn.Trim
+                    If Not String.IsNullOrWhiteSpace(strLineIn) Then
+                        strLineIn = strLineIn.Trim()
 
-						' See if strLineIn starts with the protein header start character
-						If strLineIn.StartsWith(mProteinLineStartChar) Then
-							With mCurrentEntry
-								.HeaderLine = strLineIn
-								.Name = ExtractAccessionNameFromHeader(strLineIn)
-								.Description = ExtractDescriptionFromHeader(strLineIn)
-								.Sequence = String.Empty
-							End With
-							blnProteinEntryFound = True
+                        ' See if strLineIn starts with the protein header start character
+                        If strLineIn.StartsWith(mProteinLineStartChar) Then
+                            With mCurrentEntry
+                                .HeaderLine = strLineIn
+                                .Name = ExtractAccessionNameFromHeader(strLineIn)
+                                .Description = ExtractDescriptionFromHeader(strLineIn)
+                                .Sequence = String.Empty
+                            End With
+                            blnProteinEntryFound = True
 
-							' Now continue reading until the next protein header start character is found
-							Do While mProteinFileInputStream.Peek() > -1
-								strLineIn = mProteinFileInputStream.ReadLine
+                            ' Now continue reading until the next protein header start character is found
+                            Do While Not mProteinFileInputStream.EndOfStream
+                                strLineIn = mProteinFileInputStream.ReadLine()
 
-								If Not strLineIn Is Nothing AndAlso strLineIn.Trim.Length > 0 Then
-									mFileBytesRead += strLineIn.Length + 2
-									mFileLinesRead += 1
+                                If Not String.IsNullOrWhiteSpace(strLineIn) Then
+                                    mFileBytesRead += strLineIn.Length + 2
+                                    mFileLinesRead += 1
 
-									strLineIn = strLineIn.Trim
+                                    strLineIn = strLineIn.Trim()
 
-									If strLineIn.StartsWith(mProteinLineStartChar) Then
-										' Found the next protein entry
-										' Store in mNextEntry and jump out of the loop
-										mNextEntry.HeaderLine = strLineIn
-										Exit Do
-									Else
-										mCurrentEntry.Sequence &= strLineIn
-									End If
-								End If
-							Loop
+                                    If strLineIn.StartsWith(mProteinLineStartChar) Then
+                                        ' Found the next protein entry
+                                        ' Store in mNextEntry and jump out of the loop
+                                        mNextEntry.HeaderLine = strLineIn
+                                        Exit Do
+                                    Else
+                                        mCurrentEntry.Sequence &= strLineIn
+                                    End If
+                                End If
+                            Loop
 
-						End If
-					End If
-				Loop
+                        End If
+                    End If
+                Loop
 
             Catch ex As Exception
                 ' Error reading the input file
