@@ -13,6 +13,9 @@ xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\Fasta_File_Comp
 xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\Fasta_Organism_Filter\lib\ProteinFileReader.dll" /Y
 xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\Fasta_Organism_Filter\bin\Debug\ProteinFileReader.dll" /Y
 
+xcopy ProteinFileReader.dll "F:\My Documents\Projects\KenAuberry\Organism_Database_Handler\Shared Libraries\ProteinFileReader.dll" /Y
+xcopy ProteinFileReader.dll "F:\My Documents\Projects\KenAuberry\Organism_Database_Handler\Release_DLL\ProteinFileReader.dll" /Y
+
 rem Still .NET 2: xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\Pep_Aligner\bin\ProteinFileReader.dll" /Y
 
 xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\PeptideHitResultsProcessor\bin\ProteinFileReader.dll" /Y
