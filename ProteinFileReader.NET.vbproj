@@ -103,6 +103,7 @@
     <Import Include="System" />
     <Import Include="System.Collections" />
     <Import Include="System.Diagnostics" />
+    <Import Include="System.IO" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.vb">

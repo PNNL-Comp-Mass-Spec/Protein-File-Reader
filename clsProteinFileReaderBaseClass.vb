@@ -14,26 +14,25 @@ Option Strict On
 ' Licensed under the Apache License, Version 2.0; you may not use this file except
 ' in compliance with the License.  You may obtain a copy of the License at 
 ' http://www.apache.org/licenses/LICENSE-2.0
-'
-' Notice: This computer software was prepared by Battelle Memorial Institute, 
-' hereinafter the Contractor, under Contract No. DE-AC05-76RL0 1830 with the 
-' Department of Energy (DOE).  All rights in the computer software are reserved 
-' by DOE on behalf of the United States Government and the Contractor as 
-' provided in the Contract.  NEITHER THE GOVERNMENT NOR THE CONTRACTOR MAKES ANY 
-' WARRANTY, EXPRESS OR IMPLIED, OR ASSUMES ANY LIABILITY FOR THE USE OF THIS 
-' SOFTWARE.  This notice including this sentence must appear on any copies of 
-' this computer software.
 
 Public MustInherit Class ProteinFileReaderBaseClass
 
+    ''' <summary>
+    ''' Constructor
+    ''' </summary>
+    ''' <remarks></remarks>
     Public Sub New()
-        mClassVersionDate = "January 9, 2007"
+        mClassVersionDate = "December 8, 2015"
         InitializeLocalVariables()
     End Sub
 
 #Region "Structures"
-    ' Note that this udt is used both for Proteins and for Peptides
-    ' Only Peptides from delimited text files use the Mass and NET fields
+
+    ''' <summary>
+    ''' This structure is used both for Proteins and for Peptides
+    ''' Only Peptides from delimited text files use the Mass and NET fields
+    ''' </summary>
+    ''' <remarks></remarks>
     Protected Structure udtProteinEntryType
         Public HeaderLine As String                 ' For fasta files, the header line, including the protein header start character; for Delimited files, the entire line
         Public Name As String                       ' Aka the accession name of the protein
@@ -51,7 +50,7 @@ Public MustInherit Class ProteinFileReaderBaseClass
 #Region "Classwide Variables"
     Protected mCurrentEntry As udtProteinEntryType
 
-    Protected mProteinFileInputStream As System.IO.StreamReader
+    Protected mProteinFileInputStream As StreamReader
 
     Private mFileOpen As Boolean
     Protected mFileBytesRead As Long
@@ -63,66 +62,132 @@ Public MustInherit Class ProteinFileReaderBaseClass
 
 #Region "Interface Functions"
 
+    ''' <summary>
+    ''' Unique entry ID
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks>Only used for delimited text files of peptides, with a eDelimitedFileFormatCode format that has a UniqueID column</remarks>
     Public ReadOnly Property EntryUniqueID() As Integer
         Get
             Return mCurrentEntry.UniqueID
         End Get
     End Property
 
+    ''' <summary>
+    ''' Number of lines read
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Public ReadOnly Property LinesRead() As Integer
         Get
             Return mFileLinesRead
         End Get
     End Property
 
+    ''' <summary>
+    ''' Number of lines skipped due to having an invalid format
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Public ReadOnly Property LineSkipCount() As Integer
         Get
             Return mFileLineSkipCount
         End Get
     End Property
 
+    ''' <summary>
+    ''' Peptide discriminant score
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Public ReadOnly Property PeptideDiscriminantScore() As Single
         Get
             Return mCurrentEntry.DiscriminantScore
         End Get
     End Property
 
+    ''' <summary>
+    ''' Peptide mass
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Public ReadOnly Property PeptideMass() As Double
         Get
             Return mCurrentEntry.Mass
         End Get
     End Property
 
+    ''' <summary>
+    ''' Peptide normalized elution time (NET)
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Public ReadOnly Property PeptideNET() As Single
         Get
             Return mCurrentEntry.NET
         End Get
     End Property
 
+    ''' <summary>
+    ''' Standard deviation of peptide normalized elution time (NET)
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Public ReadOnly Property PeptideNETStDev() As Single
         Get
             Return mCurrentEntry.NETStDev
         End Get
     End Property
 
+    ''' <summary>
+    ''' Protein name
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Public ReadOnly Property ProteinName() As String
         Get
             Return mCurrentEntry.Name
         End Get
     End Property
 
+    ''' <summary>
+    ''' Protein description
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Public ReadOnly Property ProteinDescription() As String
         Get
             Return mCurrentEntry.Description
         End Get
     End Property
 
+    ''' <summary>
+    ''' Protein sequence
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Public ReadOnly Property ProteinSequence() As String
         Get
             Return mCurrentEntry.Sequence
         End Get
     End Property
 
+    ''' <summary>
+    ''' Protein Name or Protein Name and Description
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks>If file format is eDelimitedFileFormatCode.SequenceOnly, returns the protein sequence</remarks>
     Public Overridable ReadOnly Property HeaderLine() As String
         Get
             Try
@@ -135,6 +200,11 @@ Public MustInherit Class ProteinFileReaderBaseClass
 
 #End Region
 
+    ''' <summary>
+    ''' Close the data file
+    ''' </summary>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
     Public Function CloseFile() As Boolean
 
         Dim blnSuccess As Boolean
@@ -173,45 +243,55 @@ Public MustInherit Class ProteinFileReaderBaseClass
         EraseProteinEntry(mCurrentEntry)
     End Sub
 
+    ''' <summary>
+    ''' Open the text file
+    ''' </summary>
+    ''' <param name="strInputFilePath"></param>
+    ''' <returns>True if success, false if a problem</returns>
+    ''' <remarks></remarks>
     Public Overridable Function OpenFile(ByVal strInputFilePath As String) As Boolean
-        ' Returns true if the file is successfully opened
 
         Dim blnSuccess As Boolean
-        Dim ioInStream As System.IO.FileStream
+        Dim ioInStream As FileStream
 
         Try
             If CloseFile() Then
-                ioInStream = New System.IO.FileStream(strInputFilePath, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
-				mProteinFileInputStream = New System.IO.StreamReader(ioInStream)
-				blnSuccess = True
-			End If
-		Catch ex As System.IO.IOException
+                ioInStream = New FileStream(strInputFilePath, FileMode.Open, FileAccess.Read, FileShare.Read)
+                mProteinFileInputStream = New StreamReader(ioInStream)
+                blnSuccess = True
+            End If
+        Catch ex As IOException
 
-			Try
-				' Try again, this time allowing for read/write access
-				ioInStream = New System.IO.FileStream(strInputFilePath, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.ReadWrite)
-				mProteinFileInputStream = New System.IO.StreamReader(ioInStream)
-				blnSuccess = True
+            Try
+                ' Try again, this time allowing for read/write access
+                ioInStream = New FileStream(strInputFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
+                mProteinFileInputStream = New StreamReader(ioInStream)
+                blnSuccess = True
 
-			Catch ex2 As Exception
-				blnSuccess = False
-			End Try
+            Catch ex2 As Exception
+                blnSuccess = False
+            End Try
 
-		Catch ex As Exception
-			blnSuccess = False
+        Catch ex As Exception
+            blnSuccess = False
         End Try
 
-		If blnSuccess Then
-			mFileOpen = True
-			mFileBytesRead = 0
-			mFileLinesRead = 0
-			mFileLineSkipCount = 0			
-		End If
+        If blnSuccess Then
+            mFileOpen = True
+            mFileBytesRead = 0
+            mFileLinesRead = 0
+            mFileLineSkipCount = 0
+        End If
 
         Return blnSuccess
 
     End Function
 
+    ''' <summary>
+    ''' Percent of the file that has been read
+    ''' </summary>
+    ''' <returns>Value between 0 and 100</returns>
+    ''' <remarks></remarks>
     Public Function PercentFileProcessed() As Single
 
         If mFileOpen Then
@@ -227,6 +307,11 @@ Public MustInherit Class ProteinFileReaderBaseClass
         End If
     End Function
 
+    ''' <summary>
+    ''' Look for the next protein entry
+    ''' </summary>
+    ''' <returns>True if an entry is found, otherwise false</returns>
+    ''' <remarks></remarks>
     Public MustOverride Function ReadNextProteinEntry() As Boolean
 
     Protected Overrides Sub Finalize()
