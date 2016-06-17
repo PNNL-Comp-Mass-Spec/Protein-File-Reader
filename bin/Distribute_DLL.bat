@@ -57,6 +57,7 @@ xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\Protein_Digesti
 
 xcopy ProteinFileReader.dll "F:\My Documents\Projects\JoshAldrich\AScore\AScore_DLL\lib\" /y
 xcopy ProteinFileReader.dll "F:\My Documents\Projects\JoshAldrich\AScore\AScore_Console\bin\Debug" /y
+xcopy ProteinFileReader.dll "F:\My Documents\Projects\JoshAldrich\AScore\AScore_Console\bin\Release" /y
 
 rem xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\Protein_Sequence_Motif_Extractor\bin\ProteinFileReader.dll" /Y
 rem Still .NET 2: xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\Residue_Frequency_Summarizer\bin\ProteinFileReader.dll" /Y
