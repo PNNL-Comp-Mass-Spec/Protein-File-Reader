@@ -55,6 +55,10 @@ xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\Protein_Digesti
 xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\Protein_Digestion_Simulator\Lib\ProteinFileReader.dll" /Y
 xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\Protein_Digestion_Simulator\Unused\bin\ProteinFileReader.dll" /Y
 
+xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\ProteinNmerGenerator\Lib\ProteinFileReader.dll" /Y
+xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\ProteinNmerGenerator\bin\ProteinFileReader.dll" /Y
+xcopy ProteinFileReader.dll "F:\My Documents\Projects\DataMining\ProteinNmerGenerator\bin\Release\ProteinFileReader.dll" /Y
+
 xcopy ProteinFileReader.dll "F:\My Documents\Projects\JoshAldrich\AScore\AScore_DLL\lib\" /y
 xcopy ProteinFileReader.dll "F:\My Documents\Projects\JoshAldrich\AScore\AScore_Console\bin\Debug" /y
 xcopy ProteinFileReader.dll "F:\My Documents\Projects\JoshAldrich\AScore\AScore_Console\bin\Release" /y
