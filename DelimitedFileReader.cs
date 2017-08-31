@@ -157,9 +157,9 @@ namespace ProteinFileReader
                         case eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID:
                         case eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET:
                         case eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET_NETStDev_DiscriminantScore:
-                            return mCurrentEntry.Name + mDelimiter + mCurrentEntry.UniqueID.ToString();
+                            return mCurrentEntry.Name + mDelimiter + mCurrentEntry.UniqueID;
                         default:
-                            Debug.Assert(false, "Unknown file format code: " + mDelimitedFileFormatCode.ToString());
+                            Debug.Assert(false, "Unknown file format code: " + mDelimitedFileFormatCode);
                             return mCurrentEntry.HeaderLine;
                     }
                 }
@@ -183,7 +183,6 @@ namespace ProteinFileReader
         }
 
         #endregion
-
 
         private void InitializeLocalVariables()
         {
@@ -212,15 +211,14 @@ namespace ProteinFileReader
             const int MAX_SPLIT_LINE_COUNT = 8;
             string strLineIn = null;
             string[] strSplitLine = null;
-            char[] strSepChars = new char[] {mDelimiter};
+            char[] strSepChars = {mDelimiter};
 
-            bool blnEntryFound = false;
+            var blnEntryFound = false;
 
             blnEntryFound = false;
             mFileLineSkipCount = 0;
 
-
-            if ((mProteinFileInputStream != null))
+            if (mProteinFileInputStream != null)
             {
                 try
                 {
@@ -393,7 +391,7 @@ namespace ProteinFileReader
                                     }
                                     break;
                                 default:
-                                    Debug.Assert(false, "Unknown file format code: " + mDelimitedFileFormatCode.ToString());
+                                    Debug.Assert(false, "Unknown file format code: " + mDelimitedFileFormatCode);
                                     blnEntryFound = false;
                                     break;
                             }
@@ -402,10 +400,8 @@ namespace ProteinFileReader
                             {
                                 mFileLineSkipCount += 1;
                             }
-
                         }
                     }
-
                 }
                 catch (Exception)
                 {
@@ -431,7 +427,6 @@ namespace ProteinFileReader
         /// <remarks></remarks>
         public override bool OpenFile(string strInputFilePath)
         {
-
             // Reset the first line tracking variable
             mFirstLineSkipped = false;
 

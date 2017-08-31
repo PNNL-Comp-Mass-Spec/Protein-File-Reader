@@ -32,9 +32,10 @@ namespace ProteinFileReader
 
         #region "Constants and Enums"
 
-        // Each protein description line in the Fasta file should start with a > symbol
+        /// <summary>
+        /// Each protein description line in the Fasta file should start with a > symbol
+        /// </summary>
         private const char PROTEIN_LINE_START_CHAR = '>';
-
         private const char PROTEIN_LINE_ACCESSION_TERMINATOR = ' ';
 
         #endregion
@@ -42,9 +43,7 @@ namespace ProteinFileReader
         #region "Classwide Variables"
 
         private char mProteinLineStartChar;
-
         private char mProteinLineAccessionEndChar;
-
         private udtProteinEntryType mNextEntry;
 
         #endregion
@@ -102,8 +101,8 @@ namespace ProteinFileReader
 
         private string ExtractDescriptionFromHeader(string strHeaderLine)
         {
-            int intCharLoc = 0;
-            string strDescription = strHeaderLine;
+            var intCharLoc = 0;
+            var strDescription = strHeaderLine;
 
             try
             {
@@ -136,8 +135,8 @@ namespace ProteinFileReader
             // Note: strHeaderLine should not start with the > character; it should have already been removed when the file was read
             // Look for mProteinLineAccessionEndChar in strHeaderLine
 
-            int intCharLoc = 0;
-            string strAccessionName = strHeaderLine;
+            var intCharLoc = 0;
+            var strAccessionName = strHeaderLine;
 
             try
             {
@@ -180,10 +179,7 @@ namespace ProteinFileReader
                     // Remove the > character from the start of the line
                     return mCurrentEntry.HeaderLine.TrimStart(mProteinLineStartChar).Trim();
                 }
-                else
-                {
-                    return mCurrentEntry.HeaderLine;
-                }
+                return mCurrentEntry.HeaderLine;
             }
             catch (Exception)
             {
@@ -210,7 +206,7 @@ namespace ProteinFileReader
         public override bool ReadNextProteinEntry()
         {
             string strLineIn = null;
-            bool blnProteinEntryFound = false;
+            var blnProteinEntryFound = false;
 
             mCurrentEntry.HeaderLine = string.Empty;
             mCurrentEntry.Name = string.Empty;
@@ -221,7 +217,7 @@ namespace ProteinFileReader
             mFileLineSkipCount = 0;
             // This is always 0 for Fasta files
 
-            if ((mProteinFileInputStream != null))
+            if (mProteinFileInputStream != null)
             {
                 try
                 {
@@ -273,10 +269,7 @@ namespace ProteinFileReader
                                             mNextEntry.HeaderLine = strLineIn;
                                             break;
                                         }
-                                        else
-                                        {
-                                            mCurrentEntry.Sequence += strLineIn;
-                                        }
+                                        mCurrentEntry.Sequence += strLineIn;
                                     }
                                 }
                             }

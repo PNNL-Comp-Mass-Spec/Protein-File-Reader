@@ -16,7 +16,7 @@
 using System;
 using System.IO;
 
-[assembly:CLSCompliant(true)]
+[assembly: CLSCompliant(true)]
 
 namespace ProteinFileReader
 {
@@ -264,11 +264,11 @@ namespace ProteinFileReader
         /// <remarks></remarks>
         public bool CloseFile()
         {
-            bool blnSuccess = false;
+            var blnSuccess = false;
 
             try
             {
-                if ((mProteinFileInputStream != null))
+                if (mProteinFileInputStream != null)
                 {
                     mProteinFileInputStream.Close();
                 }
@@ -315,7 +315,7 @@ namespace ProteinFileReader
         /// <remarks></remarks>
         public virtual bool OpenFile(string strInputFilePath)
         {
-            bool blnSuccess = false;
+            var blnSuccess = false;
 
             try
             {
@@ -332,7 +332,6 @@ namespace ProteinFileReader
                     // Try again, this time allowing for read/write access
                     mProteinFileInputStream = new StreamReader(new FileStream(strInputFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
                     blnSuccess = true;
-
                 }
                 catch (Exception)
                 {
@@ -368,15 +367,9 @@ namespace ProteinFileReader
                 {
                     return Convert.ToSingle(Math.Round((double)mFileBytesRead / mProteinFileInputStream.BaseStream.Length * 100, 2));
                 }
-                else
-                {
-                    return 0;
-                }
-            }
-            else
-            {
                 return 0;
             }
+            return 0;
         }
 
         /// <summary>
