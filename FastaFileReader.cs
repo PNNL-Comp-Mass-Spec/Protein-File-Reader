@@ -16,6 +16,9 @@ using System;
 
 namespace ProteinFileReader
 {
+    /// <summary>
+    /// Class for reading *.fasta files
+    /// </summary>
     public class FastaFileReader : ProteinFileReaderBaseClass
     {
         /// <summary>
@@ -70,7 +73,7 @@ namespace ProteinFileReader
             get { return mProteinLineStartChar; }
             set
             {
-                if (!(value == null))
+                if (value != 0)
                 {
                     mProteinLineStartChar = value;
                 }
@@ -88,7 +91,7 @@ namespace ProteinFileReader
             get { return mProteinLineAccessionEndChar; }
             set
             {
-                if (!(value == null))
+                if (value != 0)
                 {
                     mProteinLineAccessionEndChar = value;
                 }
@@ -120,7 +123,7 @@ namespace ProteinFileReader
                     strDescription = strHeaderLine;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Ignore any errors
             }
@@ -154,7 +157,7 @@ namespace ProteinFileReader
                     strAccessionName = strHeaderLine;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Ignore any errors
             }
@@ -182,7 +185,7 @@ namespace ProteinFileReader
                     return mCurrentEntry.HeaderLine;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return mCurrentEntry.HeaderLine;
             }
@@ -280,7 +283,7 @@ namespace ProteinFileReader
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Error reading the input file
                     // Ignore any errors

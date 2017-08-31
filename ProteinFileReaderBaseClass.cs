@@ -20,6 +20,9 @@ using System.IO;
 
 namespace ProteinFileReader
 {
+    /// <summary>
+    /// Abstract base class for reading protein files
+    /// </summary>
     public abstract class ProteinFileReaderBaseClass : IDisposable
     {
         /// <summary>
@@ -28,7 +31,6 @@ namespace ProteinFileReader
         /// <remarks></remarks>
         public ProteinFileReaderBaseClass()
         {
-            mClassVersionDate = "December 8, 2015";
             InitializeLocalVariables();
         }
 
@@ -41,22 +43,49 @@ namespace ProteinFileReader
         /// <remarks></remarks>
         protected struct udtProteinEntryType
         {
-            // For fasta files, the header line, including the protein header start character; for Delimited files, the entire line
+            /// <summary>
+            /// For fasta files, the header line, including the protein header start character; for Delimited files, the entire line
+            /// </summary>
             public string HeaderLine;
 
-            // Aka the accession name of the protein
+            /// <summary>
+            /// Aka the accession name of the protein
+            /// </summary>
             public string Name;
 
+            /// <summary>
+            /// Protein description
+            /// </summary>
             public string Description;
 
+            /// <summary>
+            /// Protein sequence
+            /// </summary>
             public string Sequence;
 
-            // For delimited text files listing peptides, the UniqueID of the peptide sequence
+            /// <summary>
+            /// For delimited text files listing peptides, the UniqueID of the peptide sequence
+            /// </summary>
             public int UniqueID;
 
+            /// <summary>
+            /// Protein mass
+            /// </summary>
             public double Mass;
+
+            /// <summary>
+            /// Protein Normalized Elution Time
+            /// </summary>
             public float NET;
+
+            /// <summary>
+            /// Standard deviation of the Normalized Elution Time
+            /// </summary>
             public float NETStDev;
+
+            /// <summary>
+            /// Discriminant score
+            /// </summary>
             public float DiscriminantScore;
         }
 
@@ -64,16 +93,32 @@ namespace ProteinFileReader
 
         #region "Classwide Variables"
 
+        /// <summary>
+        /// Current entry being read/evaluated
+        /// </summary>
         protected udtProteinEntryType mCurrentEntry;
 
+        /// <summary>
+        /// Stream for reading the protein file
+        /// </summary>
         protected StreamReader mProteinFileInputStream;
+
         private bool mFileOpen;
+
+        /// <summary>
+        /// Bytes read from the file
+        /// </summary>
         protected long mFileBytesRead;
+
+        /// <summary>
+        /// Lines read from the file
+        /// </summary>
         protected int mFileLinesRead;
 
+        /// <summary>
+        /// Lines skipped in the file
+        /// </summary>
         protected int mFileLineSkipCount;
-
-        private string mClassVersionDate;
 
         #endregion
 
@@ -203,7 +248,7 @@ namespace ProteinFileReader
                 {
                     return mCurrentEntry.HeaderLine;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return mCurrentEntry.HeaderLine;
                 }
@@ -232,7 +277,7 @@ namespace ProteinFileReader
                 mFileLinesRead = 0;
                 blnSuccess = true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 blnSuccess = false;
             }
@@ -240,6 +285,10 @@ namespace ProteinFileReader
             return blnSuccess;
         }
 
+        /// <summary>
+        /// Reset the fields of the protein entry to defaults
+        /// </summary>
+        /// <param name="udtProteinEntry"></param>
         protected void EraseProteinEntry(ref udtProteinEntryType udtProteinEntry)
         {
             udtProteinEntry.HeaderLine = string.Empty;
@@ -276,7 +325,7 @@ namespace ProteinFileReader
                     blnSuccess = true;
                 }
             }
-            catch (IOException ex)
+            catch (IOException)
             {
                 try
                 {
@@ -285,12 +334,12 @@ namespace ProteinFileReader
                     blnSuccess = true;
 
                 }
-                catch (Exception ex2)
+                catch (Exception)
                 {
                     blnSuccess = false;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 blnSuccess = false;
             }
@@ -337,6 +386,9 @@ namespace ProteinFileReader
         /// <remarks></remarks>
         public abstract bool ReadNextProteinEntry();
 
+        /// <summary>
+        /// Properly close open file handles
+        /// </summary>
         public void Dispose()
         {
             if (mFileOpen)

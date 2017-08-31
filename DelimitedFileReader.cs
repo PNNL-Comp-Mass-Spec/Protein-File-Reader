@@ -18,6 +18,9 @@ using System.Diagnostics;
 
 namespace ProteinFileReader
 {
+    /// <summary>
+    /// Class for reading tab-delimited protein files
+    /// </summary>
     public class DelimitedFileReader : ProteinFileReaderBaseClass
     {
         /// <summary>
@@ -37,13 +40,44 @@ namespace ProteinFileReader
         /// <remarks></remarks>
         public enum eDelimitedFileFormatCode
         {
+            /// <summary>
+            /// File contains protein sequences, one per line
+            /// </summary>
             SequenceOnly = 0,
+
+            /// <summary>
+            /// Each line of the file contains a protein name, tab, sequence
+            /// </summary>
             ProteinName_Sequence = 1,
+
+            /// <summary>
+            /// Each line of the file contains a protein name, description, and sequence
+            /// </summary>
             ProteinName_Description_Sequence = 2,
+
+            /// <summary>
+            /// Each line of the file contains a unique id and protein sequence
+            /// </summary>
             UniqueID_Sequence = 3,
+
+            /// <summary>
+            /// Each line of the file contains a protein name, peptide sequence, and unique id
+            /// </summary>
             ProteinName_PeptideSequence_UniqueID = 4,
+
+            /// <summary>
+            /// Each line of the file contains a protein name, peptide sequence, unique id, mass, and NET
+            /// </summary>
             ProteinName_PeptideSequence_UniqueID_Mass_NET = 5,
+
+            /// <summary>
+            /// Each line of the file contains a protein name, peptide sequence, unique id, mass, NET, NET Standard deviation, and discriminant score
+            /// </summary>
             ProteinName_PeptideSequence_UniqueID_Mass_NET_NETStDev_DiscriminantScore = 6,
+
+            /// <summary>
+            /// Each line of the file contains a unique id, sequence, mass, and NET
+            /// </summary>
             UniqueID_Sequence_Mass_NET = 7
         }
 
@@ -117,7 +151,6 @@ namespace ProteinFileReader
                             {
                                 return mCurrentEntry.Name;
                             }
-                            break;
                         case eDelimitedFileFormatCode.UniqueID_Sequence:
                         case eDelimitedFileFormatCode.UniqueID_Sequence_Mass_NET:
                             return mCurrentEntry.Name;
@@ -130,7 +163,7 @@ namespace ProteinFileReader
                             return mCurrentEntry.HeaderLine;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return mCurrentEntry.HeaderLine;
                 }
@@ -158,6 +191,11 @@ namespace ProteinFileReader
             mDelimitedFileFormatCode = eDelimitedFileFormatCode.ProteinName_Description_Sequence;
         }
 
+        /// <summary>
+        /// Determine if the provided string can be parsed as a number
+        /// </summary>
+        /// <param name="strText"></param>
+        /// <returns></returns>
         protected bool IsNumber(string strText)
         {
             double dblValue;
@@ -278,7 +316,7 @@ namespace ProteinFileReader
                                             {
                                                 mCurrentEntry.UniqueID = int.Parse(strSplitLine[0]);
                                             }
-                                            catch (Exception ex)
+                                            catch (Exception)
                                             {
                                                 mCurrentEntry.UniqueID = 0;
                                             }
@@ -289,7 +327,7 @@ namespace ProteinFileReader
                                                 {
                                                     mCurrentEntry.Mass = double.Parse(strSplitLine[2]);
                                                 }
-                                                catch (Exception ex)
+                                                catch (Exception)
                                                 {
                                                 }
 
@@ -297,7 +335,7 @@ namespace ProteinFileReader
                                                 {
                                                     mCurrentEntry.NET = float.Parse(strSplitLine[3]);
                                                 }
-                                                catch (Exception ex)
+                                                catch (Exception)
                                                 {
                                                 }
                                             }
@@ -322,7 +360,7 @@ namespace ProteinFileReader
                                             {
                                                 mCurrentEntry.UniqueID = int.Parse(strSplitLine[2]);
                                             }
-                                            catch (Exception ex)
+                                            catch (Exception)
                                             {
                                                 mCurrentEntry.UniqueID = 0;
                                             }
@@ -334,7 +372,7 @@ namespace ProteinFileReader
                                                     mCurrentEntry.Mass = double.Parse(strSplitLine[3]);
                                                     mCurrentEntry.NET = float.Parse(strSplitLine[4]);
                                                 }
-                                                catch (Exception ex)
+                                                catch (Exception)
                                                 {
                                                 }
 
@@ -345,7 +383,7 @@ namespace ProteinFileReader
                                                         mCurrentEntry.NETStDev = float.Parse(strSplitLine[5]);
                                                         mCurrentEntry.DiscriminantScore = float.Parse(strSplitLine[6]);
                                                     }
-                                                    catch (Exception ex)
+                                                    catch (Exception)
                                                     {
                                                     }
                                                 }
@@ -369,7 +407,7 @@ namespace ProteinFileReader
                     }
 
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Error reading the input file
                     // Ignore any errors
