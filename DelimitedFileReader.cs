@@ -21,7 +21,7 @@ namespace ProteinFileReader
     /// <summary>
     /// Class for reading tab-delimited protein files
     /// </summary>
-    public class DelimitedFileReader : ProteinFileReaderBaseClass
+    public sealed class DelimitedFileReader : ProteinFileReaderBaseClass
     {
         /// <summary>
         /// Constructor
@@ -29,7 +29,18 @@ namespace ProteinFileReader
         /// <remarks></remarks>
         public DelimitedFileReader()
         {
-            InitializeLocalVariables();
+            InitializeLocalVariables(eDelimitedFileFormatCode.ProteinName_Description_Sequence);
+        }
+
+        /// <summary>
+        /// Constructor that accepts a text file path
+        /// </summary>
+        /// <param name="fastaFilePath"></param>
+        /// <param name="fileFormat"></param>
+        public DelimitedFileReader(string fastaFilePath, eDelimitedFileFormatCode fileFormat = eDelimitedFileFormatCode.ProteinName_Description_Sequence)
+        {
+            InitializeLocalVariables(fileFormat);
+            OpenFile(fastaFilePath);
         }
 
         #region "Constants and Enums"
@@ -184,10 +195,10 @@ namespace ProteinFileReader
 
         #endregion
 
-        private void InitializeLocalVariables()
+        private void InitializeLocalVariables(eDelimitedFileFormatCode fileFormat)
         {
             mDelimiter = '\t';
-            mDelimitedFileFormatCode = eDelimitedFileFormatCode.ProteinName_Description_Sequence;
+            mDelimitedFileFormatCode = fileFormat;
         }
 
         /// <summary>

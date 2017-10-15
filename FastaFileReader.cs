@@ -30,6 +30,16 @@ namespace ProteinFileReader
             InitializeLocalVariables();
         }
 
+        /// <summary>
+        /// Constructor that accepts a FASTA file path
+        /// </summary>
+        /// <param name="fastaFilePath"></param>
+        public FastaFileReader(string fastaFilePath)
+        {
+            InitializeLocalVariables();
+            OpenFile(fastaFilePath);
+        }
+
         #region "Constants and Enums"
 
         /// <summary>
