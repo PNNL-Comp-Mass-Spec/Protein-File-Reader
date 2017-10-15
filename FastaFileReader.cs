@@ -63,7 +63,9 @@ namespace ProteinFileReader
         /// </summary>
         /// <remarks>Typically a space</remarks>
         private char mProteinLineAccessionEndChar;
-        private udtProteinEntryType mNextEntry;
+
+
+        private string mCachedHeaderLine;
 
         #endregion
 
@@ -208,10 +210,7 @@ namespace ProteinFileReader
             mProteinLineStartChar = PROTEIN_LINE_START_CHAR;
             mProteinLineAccessionEndChar = PROTEIN_LINE_ACCESSION_TERMINATOR;
 
-            mNextEntry.HeaderLine = string.Empty;
-            mNextEntry.Name = string.Empty;
-            mNextEntry.Description = string.Empty;
-            mNextEntry.Sequence = string.Empty;
+            mCachedHeaderLine = string.Empty;
         }
 
         /// <summary>

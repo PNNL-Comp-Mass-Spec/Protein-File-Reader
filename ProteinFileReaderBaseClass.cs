@@ -34,69 +34,12 @@ namespace ProteinFileReader
             mCurrentEntry = new ProteinInfo("");
         }
 
-        #region "Structures"
-
-        /// <summary>
-        /// This structure is used both for Proteins and for Peptides
-        /// Only Peptides from delimited text files use the Mass and NET fields
-        /// </summary>
-        /// <remarks></remarks>
-        protected struct udtProteinEntryType
-        {
-            /// <summary>
-            /// For fasta files, the header line, including the protein header start character; for Delimited files, the entire line
-            /// </summary>
-            public string HeaderLine;
-
-            /// <summary>
-            /// Aka the accession name of the protein
-            /// </summary>
-            public string Name;
-
-            /// <summary>
-            /// Protein description
-            /// </summary>
-            public string Description;
-
-            /// <summary>
-            /// Protein sequence
-            /// </summary>
-            public string Sequence;
-
-            /// <summary>
-            /// For delimited text files listing peptides, the UniqueID of the peptide sequence
-            /// </summary>
-            public int UniqueID;
-
-            /// <summary>
-            /// Protein mass
-            /// </summary>
-            public double Mass;
-
-            /// <summary>
-            /// Protein Normalized Elution Time
-            /// </summary>
-            public float NET;
-
-            /// <summary>
-            /// Standard deviation of the Normalized Elution Time
-            /// </summary>
-            public float NETStDev;
-
-            /// <summary>
-            /// Discriminant score
-            /// </summary>
-            public float DiscriminantScore;
-        }
-
-        #endregion
-
         #region "Classwide Variables"
 
         /// <summary>
         /// Current entry being read/evaluated
         /// </summary>
-        protected udtProteinEntryType mCurrentEntry;
+        protected readonly ProteinInfo mCurrentEntry;
 
         /// <summary>
         /// Stream for reading the protein file
@@ -241,27 +184,6 @@ namespace ProteinFileReader
 
             return blnSuccess;
         }
-
-        /// <summary>
-        /// Reset the fields of the protein entry to defaults
-        /// </summary>
-        /// <param name="udtProteinEntry"></param>
-        protected void EraseProteinEntry(ref udtProteinEntryType udtProteinEntry)
-        {
-            udtProteinEntry.HeaderLine = string.Empty;
-            udtProteinEntry.Name = string.Empty;
-            udtProteinEntry.Description = string.Empty;
-            udtProteinEntry.Sequence = string.Empty;
-            udtProteinEntry.UniqueID = 0;
-            udtProteinEntry.Mass = 0;
-            udtProteinEntry.NET = 0;
-            udtProteinEntry.NETStDev = 0;
-            udtProteinEntry.DiscriminantScore = 0;
-        }
-
-        private void InitializeLocalVariables()
-        {
-            EraseProteinEntry(ref mCurrentEntry);
         }
 
         /// <summary>
