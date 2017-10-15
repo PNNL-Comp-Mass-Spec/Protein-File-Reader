@@ -44,6 +44,7 @@ namespace ProteinFileReader
             OpenFile(fastaFilePath);
         }
 
+
         #region "Constants and Enums"
 
         /// <summary>
@@ -177,8 +178,7 @@ namespace ProteinFileReader
                         case eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET_NETStDev_DiscriminantScore:
                             return mCurrentEntry.Name + mDelimiter + mCurrentEntry.UniqueID;
                         default:
-                            Debug.Assert(false, "Unknown file format code: " + mDelimitedFileFormatCode);
-                            return mCurrentEntry.HeaderLine;
+                            throw new Exception("Unknown file format code: " + mDelimitedFileFormatCode);
                     }
                 }
                 catch (Exception)
