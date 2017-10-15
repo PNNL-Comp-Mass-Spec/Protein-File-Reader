@@ -7,7 +7,6 @@ before_build:
 build:
   project: ProteinFileReader.sln
   verbosity: minimal
-test: off
 artifacts:
 - path: bin\Release\net40\ProteinFileReader.dll
 - path: bin\Release\ProteinFileReader*.nupkg
