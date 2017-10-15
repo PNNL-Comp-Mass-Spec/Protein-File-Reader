@@ -19,7 +19,7 @@ namespace ProteinFileReader
     /// <summary>
     /// Class for reading *.fasta files
     /// </summary>
-    public class FastaFileReader : ProteinFileReaderBaseClass
+    public sealed class FastaFileReader : ProteinFileReaderBaseClass
     {
         /// <summary>
         /// Constructor
@@ -117,27 +117,26 @@ namespace ProteinFileReader
 
         #endregion
 
-        private string ExtractDescriptionFromHeader(string strHeaderLine)
+        private string ExtractDescriptionFromHeader(string headerLine)
         {
-            var intCharLoc = 0;
-            var strDescription = strHeaderLine;
+            var description = headerLine;
 
             try
             {
-                if (strHeaderLine.StartsWith(mProteinLineStartChar.ToString()))
+                if (headerLine.StartsWith(mProteinLineStartChar.ToString()))
                 {
                     // Remove the > character from the start of the line
-                    strHeaderLine = strHeaderLine.TrimStart(mProteinLineStartChar).Trim();
+                    headerLine = headerLine.TrimStart(mProteinLineStartChar).Trim();
                 }
 
-                intCharLoc = strHeaderLine.IndexOf(mProteinLineAccessionEndChar);
-                if (intCharLoc > 0)
+                var charIndex = headerLine.IndexOf(mProteinLineAccessionEndChar);
+                if (charIndex > 0)
                 {
-                    strDescription = strHeaderLine.Substring(intCharLoc + 1).Trim();
+                    description = headerLine.Substring(charIndex + 1).Trim();
                 }
                 else
                 {
-                    strDescription = strHeaderLine;
+                    description = headerLine;
                 }
             }
             catch (Exception)
@@ -145,33 +144,32 @@ namespace ProteinFileReader
                 // Ignore any errors
             }
 
-            return strDescription;
+            return description;
         }
 
-        private string ExtractAccessionNameFromHeader(string strHeaderLine)
+        private string ExtractAccessionNameFromHeader(string headerLine)
         {
-            // Note: strHeaderLine should not start with the > character; it should have already been removed when the file was read
-            // Look for mProteinLineAccessionEndChar in strHeaderLine
+            // Note: headerLine should not start with the > character; it should have already been removed when the file was read
+            // Look for mProteinLineAccessionEndChar in headerLine
 
-            var intCharLoc = 0;
-            var strAccessionName = strHeaderLine;
+            var accessionName = headerLine;
 
             try
             {
-                if (strHeaderLine.StartsWith(mProteinLineStartChar.ToString()))
+                if (headerLine.StartsWith(mProteinLineStartChar.ToString()))
                 {
                     // Remove the > character from the start of the line
-                    strHeaderLine = strHeaderLine.TrimStart(mProteinLineStartChar).Trim();
+                    headerLine = headerLine.TrimStart(mProteinLineStartChar).Trim();
                 }
 
-                intCharLoc = strHeaderLine.IndexOf(mProteinLineAccessionEndChar);
-                if (intCharLoc > 0)
+                var charIndex = headerLine.IndexOf(mProteinLineAccessionEndChar);
+                if (charIndex > 0)
                 {
-                    strAccessionName = strHeaderLine.Substring(0, intCharLoc).Trim();
+                    accessionName = headerLine.Substring(0, charIndex).Trim();
                 }
                 else
                 {
-                    strAccessionName = strHeaderLine;
+                    accessionName = headerLine;
                 }
             }
             catch (Exception)
@@ -179,7 +177,7 @@ namespace ProteinFileReader
                 // Ignore any errors
             }
 
-            return strAccessionName;
+            return accessionName;
         }
 
         /// <summary>
@@ -220,86 +218,85 @@ namespace ProteinFileReader
         /// <remarks></remarks>
         public override bool ReadNextProteinEntry()
         {
-            string strLineIn = null;
-            var blnProteinEntryFound = false;
+            mCurrentEntry.Clear();
 
-            mCurrentEntry.HeaderLine = string.Empty;
-            mCurrentEntry.Name = string.Empty;
-            mCurrentEntry.Description = string.Empty;
-            mCurrentEntry.Sequence = string.Empty;
+            var proteinEntryFound = false;
 
-            blnProteinEntryFound = false;
-            mFileLineSkipCount = 0;
             // This is always 0 for Fasta files
+            mFileLineSkipCount = 0;
 
-            if (mProteinFileInputStream != null)
+            if (mProteinFileInputStream == null)
+                return false;
+
+            try
             {
-                try
+                while (!proteinEntryFound && !mProteinFileInputStream.EndOfStream)
                 {
-                    while (!blnProteinEntryFound && !mProteinFileInputStream.EndOfStream)
+                    string lineIn;
+                    if (!string.IsNullOrWhiteSpace(mCachedHeaderLine))
                     {
-                        if (!string.IsNullOrWhiteSpace(mNextEntry.HeaderLine))
+                        lineIn = string.Copy(mCachedHeaderLine);
+                        mCachedHeaderLine = string.Empty;
+                    }
+                    else
+                    {
+                        lineIn = mProteinFileInputStream.ReadLine();
+                        if (!string.IsNullOrWhiteSpace(lineIn))
                         {
-                            strLineIn = mNextEntry.HeaderLine;
-                        }
-                        else
-                        {
-                            strLineIn = mProteinFileInputStream.ReadLine();
-                            if (!string.IsNullOrWhiteSpace(strLineIn))
-                            {
-                                mFileBytesRead += strLineIn.Length + 2;
-                                mFileLinesRead += 1;
-                            }
-                        }
-
-                        if (!string.IsNullOrWhiteSpace(strLineIn))
-                        {
-                            strLineIn = strLineIn.Trim();
-
-                            // See if strLineIn starts with the protein header start character
-                            if (strLineIn.StartsWith(mProteinLineStartChar.ToString()))
-                            {
-                                mCurrentEntry.HeaderLine = strLineIn;
-                                mCurrentEntry.Name = ExtractAccessionNameFromHeader(strLineIn);
-                                mCurrentEntry.Description = ExtractDescriptionFromHeader(strLineIn);
-                                mCurrentEntry.Sequence = string.Empty;
-                                blnProteinEntryFound = true;
-
-                                // Now continue reading until the next protein header start character is found
-                                while (!mProteinFileInputStream.EndOfStream)
-                                {
-                                    strLineIn = mProteinFileInputStream.ReadLine();
-
-                                    if (!string.IsNullOrWhiteSpace(strLineIn))
-                                    {
-                                        mFileBytesRead += strLineIn.Length + 2;
-                                        mFileLinesRead += 1;
-
-                                        strLineIn = strLineIn.Trim();
-
-                                        if (strLineIn.StartsWith(mProteinLineStartChar.ToString()))
-                                        {
-                                            // Found the next protein entry
-                                            // Store in mNextEntry and jump out of the loop
-                                            mNextEntry.HeaderLine = strLineIn;
-                                            break;
-                                        }
-                                        mCurrentEntry.Sequence += strLineIn;
-                                    }
-                                }
-                            }
+                            mFileBytesRead += lineIn.Length + 2;
+                            mFileLinesRead += 1;
                         }
                     }
-                }
-                catch (Exception)
-                {
-                    // Error reading the input file
-                    // Ignore any errors
-                    blnProteinEntryFound = false;
+
+                    if (string.IsNullOrWhiteSpace(lineIn))
+                        continue;
+
+                    var dataLine = lineIn.Trim();
+
+                    // See if lineIn starts with the protein header start character
+                    if (!dataLine.StartsWith(mProteinLineStartChar.ToString()))
+                        continue;
+
+                    mCurrentEntry.HeaderLine = dataLine;
+                    mCurrentEntry.Name = ExtractAccessionNameFromHeader(dataLine);
+                    mCurrentEntry.Description = ExtractDescriptionFromHeader(dataLine);
+                    mCurrentEntry.Sequence = string.Empty;
+                    proteinEntryFound = true;
+
+                    // Now continue reading until the next protein header start character is found
+                    while (!mProteinFileInputStream.EndOfStream)
+                    {
+                        var lineIn2 = mProteinFileInputStream.ReadLine();
+
+                        if (string.IsNullOrWhiteSpace(lineIn2))
+                            continue;
+
+                        mFileBytesRead += lineIn2.Length + 2;
+                        mFileLinesRead += 1;
+
+                        var dataLine2 = lineIn2.Trim();
+
+                        if (dataLine2.StartsWith(mProteinLineStartChar.ToString()))
+                        {
+                            // Found the next protein entry
+                            // Store in mCachedHeaderLine and jump out of the loop
+                            mCachedHeaderLine = string.Copy(dataLine2);
+                            break;
+                        }
+
+                        // dataLine2 has additional residues for the current protein
+                        mCurrentEntry.Sequence += dataLine2;
+                    }
                 }
             }
+            catch (Exception)
+            {
+                // Error reading the input file
+                // Ignore any errors
+                proteinEntryFound = false;
+            }
 
-            return blnProteinEntryFound;
+            return proteinEntryFound;
         }
     }
 }

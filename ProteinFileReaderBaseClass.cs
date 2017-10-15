@@ -164,44 +164,37 @@ namespace ProteinFileReader
         /// <remarks></remarks>
         public bool CloseFile()
         {
-            var blnSuccess = false;
-
             try
             {
-                if (mProteinFileInputStream != null)
-                {
-                    mProteinFileInputStream.Close();
-                }
+                mProteinFileInputStream?.Close();
                 mFileOpen = false;
                 mFileBytesRead = 0;
                 mFileLinesRead = 0;
-                blnSuccess = true;
+                return true;
             }
             catch (Exception)
             {
-                blnSuccess = false;
+                return false;
             }
 
-            return blnSuccess;
-        }
         }
 
         /// <summary>
         /// Open the text file
         /// </summary>
-        /// <param name="strInputFilePath"></param>
+        /// <param name="inputFilePath"></param>
         /// <returns>True if success, false if a problem</returns>
         /// <remarks></remarks>
-        public virtual bool OpenFile(string strInputFilePath)
+        public virtual bool OpenFile(string inputFilePath)
         {
-            var blnSuccess = false;
+            var success = false;
 
             try
             {
                 if (CloseFile())
                 {
-                    mProteinFileInputStream = new StreamReader(new FileStream(strInputFilePath, FileMode.Open, FileAccess.Read, FileShare.Read));
-                    blnSuccess = true;
+                    mProteinFileInputStream = new StreamReader(new FileStream(inputFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+                    success = true;
                 }
             }
             catch (IOException)
@@ -209,20 +202,20 @@ namespace ProteinFileReader
                 try
                 {
                     // Try again, this time allowing for read/write access
-                    mProteinFileInputStream = new StreamReader(new FileStream(strInputFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
-                    blnSuccess = true;
+                    mProteinFileInputStream = new StreamReader(new FileStream(inputFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+                    success = true;
                 }
                 catch (Exception)
                 {
-                    blnSuccess = false;
+                    success = false;
                 }
             }
             catch (Exception)
             {
-                blnSuccess = false;
+                success = false;
             }
 
-            if (blnSuccess)
+            if (success)
             {
                 mFileOpen = true;
                 mFileBytesRead = 0;
@@ -230,7 +223,7 @@ namespace ProteinFileReader
                 mFileLineSkipCount = 0;
             }
 
-            return blnSuccess;
+            return success;
         }
 
         /// <summary>
@@ -240,15 +233,12 @@ namespace ProteinFileReader
         /// <remarks></remarks>
         public float PercentFileProcessed()
         {
-            if (mFileOpen)
-            {
-                if (mProteinFileInputStream.BaseStream.Length > 0)
-                {
-                    return Convert.ToSingle(Math.Round((double)mFileBytesRead / mProteinFileInputStream.BaseStream.Length * 100, 2));
-                }
+            if (!mFileOpen) return 0;
+
+            if (mProteinFileInputStream.BaseStream.Length == 0)
                 return 0;
-            }
-            return 0;
+
+            return Convert.ToSingle(Math.Round((double)mFileBytesRead / mProteinFileInputStream.BaseStream.Length * 100, 2));
         }
 
         /// <summary>

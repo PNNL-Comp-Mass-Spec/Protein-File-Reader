@@ -14,7 +14,8 @@
 //
 
 using System;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ProteinFileReader
 {
@@ -210,12 +211,11 @@ namespace ProteinFileReader
         /// <summary>
         /// Determine if the provided string can be parsed as a number
         /// </summary>
-        /// <param name="strText"></param>
+        /// <param name="text"></param>
         /// <returns></returns>
-        protected bool IsNumber(string strText)
+        private bool IsNumber(string text)
         {
-            double dblValue;
-            return double.TryParse(strText, out dblValue);
+            return double.TryParse(text, out _);
         }
 
         /// <summary>
@@ -226,49 +226,51 @@ namespace ProteinFileReader
         public override bool ReadNextProteinEntry()
         {
             const int MAX_SPLIT_LINE_COUNT = 8;
-            string strLineIn = null;
-            string[] strSplitLine = null;
-            char[] strSepChars = {mDelimiter};
+            char[] sepChars =  {mDelimiter };
 
-            var blnEntryFound = false;
+            var entryFound = false;
 
-            blnEntryFound = false;
             mFileLineSkipCount = 0;
 
-            if (mProteinFileInputStream != null)
+            if (mProteinFileInputStream == null)
             {
-                try
+                mCurrentEntry.Clear();
+                return false;
+            }
+
+            try
+            {
+                if (mSkipFirstLine & !mFirstLineSkipped)
                 {
-                    if (mSkipFirstLine & !mFirstLineSkipped)
+                    mFirstLineSkipped = true;
+
+                    if (!mProteinFileInputStream.EndOfStream)
                     {
-                        mFirstLineSkipped = true;
+                        var headerLine = mProteinFileInputStream.ReadLine();
 
-                        if (!mProteinFileInputStream.EndOfStream)
+                        if (!string.IsNullOrWhiteSpace(headerLine))
                         {
-                            strLineIn = mProteinFileInputStream.ReadLine();
-
-                            if (!string.IsNullOrWhiteSpace(strLineIn))
-                            {
-                                mFileBytesRead += strLineIn.Length + 2;
-                                mFileLinesRead += 1;
-                            }
+                            mFileBytesRead += headerLine.Length + 2;
+                            mFileLinesRead += 1;
                         }
                     }
+                }
 
-                    // Read the file until the next valid line is found
-                    while (!blnEntryFound && !mProteinFileInputStream.EndOfStream)
-                    {
-                        strLineIn = mProteinFileInputStream.ReadLine();
+                // Read the file until the next valid line is found
+                while (!entryFound && !mProteinFileInputStream.EndOfStream)
+                {
+                    var lineIn = mProteinFileInputStream.ReadLine();
 
-                        if (!string.IsNullOrWhiteSpace(strLineIn))
-                        {
-                            mFileBytesRead += strLineIn.Length + 2;
-                            mFileLinesRead += 1;
+                    if (string.IsNullOrWhiteSpace(lineIn))
+                        continue;
 
-                            strLineIn = strLineIn.Trim();
-                            strSplitLine = strLineIn.Split(strSepChars, MAX_SPLIT_LINE_COUNT);
+                    mFileBytesRead += lineIn.Length + 2;
+                    mFileLinesRead += 1;
 
-                            EraseProteinEntry(ref mCurrentEntry);
+                    var dataLine = lineIn.TrimEnd();
+                    var splitLine = dataLine.Split(sepChars, MAX_SPLIT_LINE_COUNT).ToList();
+
+                    mCurrentEntry.Clear();
 
                     switch (mDelimitedFileFormatCode)
                     {
@@ -362,22 +364,26 @@ namespace ProteinFileReader
                             throw new Exception("Unknown file format code: " + mDelimitedFileFormatCode);
                     }
 
+                    if (!entryFound)
+                    {
+                        mFileLineSkipCount += 1;
                     }
                 }
-                catch (Exception)
-                {
-                    // Error reading the input file
-                    // Ignore any errors
-                    blnEntryFound = false;
-                }
             }
-
-            if (!blnEntryFound)
+            catch (Exception)
             {
-                EraseProteinEntry(ref mCurrentEntry);
+                // Error reading the input file
+                // Ignore any errors
+                entryFound = false;
             }
 
-            return blnEntryFound;
+            if (!entryFound)
+            {
+                mCurrentEntry.Clear();
+            }
+
+            return entryFound;
+        }
 
         private bool ParseNameDescriptionSequenceLine(
             string dataLine,
@@ -402,16 +408,16 @@ namespace ProteinFileReader
         /// <summary>
         /// Open the delimited text file
         /// </summary>
-        /// <param name="strInputFilePath"></param>
+        /// <param name="inputFilePath"></param>
         /// <returns>True if success, false if a problem</returns>
         /// <remarks></remarks>
-        public override bool OpenFile(string strInputFilePath)
+        public override bool OpenFile(string inputFilePath)
         {
             // Reset the first line tracking variable
             mFirstLineSkipped = false;
 
             // Call OpenFile in the base class
-            return base.OpenFile(strInputFilePath);
+            return base.OpenFile(inputFilePath);
         }
     }
 }
