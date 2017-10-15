@@ -52,7 +52,16 @@ namespace ProteinFileReader
 
         #region "Classwide Variables"
 
+        /// <summary>
+        /// Character that indicates the start of a data line with protein name (accession) and optionally description
+        /// </summary>
+        /// <remarks>Typically a '>'</remarks>
         private char mProteinLineStartChar;
+
+        /// <summary>
+        /// Character that denotes the end of the protein name
+        /// </summary>
+        /// <remarks>Typically a space</remarks>
         private char mProteinLineAccessionEndChar;
         private udtProteinEntryType mNextEntry;
 
@@ -66,10 +75,7 @@ namespace ProteinFileReader
         /// <value></value>
         /// <returns></returns>
         /// <remarks></remarks>
-        public override string HeaderLine
-        {
-            get { return GetHeaderLine(false); }
-        }
+        public override string HeaderLine => GetHeaderLine(false);
 
         /// <summary>
         /// Character that precedes each header line (the line with the protein name and description)
@@ -79,7 +85,7 @@ namespace ProteinFileReader
         /// <remarks></remarks>
         public char ProteinLineStartChar
         {
-            get { return mProteinLineStartChar; }
+            get => mProteinLineStartChar;
             set
             {
                 if (value != 0)
@@ -97,7 +103,7 @@ namespace ProteinFileReader
         /// <remarks></remarks>
         public char ProteinLineAccessionEndChar
         {
-            get { return mProteinLineAccessionEndChar; }
+            get => mProteinLineAccessionEndChar;
             set
             {
                 if (value != 0)

@@ -29,9 +29,9 @@ namespace ProteinFileReader
         /// Constructor
         /// </summary>
         /// <remarks></remarks>
-        public ProteinFileReaderBaseClass()
+        protected ProteinFileReaderBaseClass()
         {
-            InitializeLocalVariables();
+            mCurrentEntry = new ProteinInfo("");
         }
 
         #region "Structures"
@@ -130,10 +130,7 @@ namespace ProteinFileReader
         /// <value></value>
         /// <returns></returns>
         /// <remarks>Only used for delimited text files of peptides, with a eDelimitedFileFormatCode format that has a UniqueID column</remarks>
-        public int EntryUniqueID
-        {
-            get { return mCurrentEntry.UniqueID; }
-        }
+        public int EntryUniqueID => mCurrentEntry.UniqueID;
 
         /// <summary>
         /// Number of lines read
@@ -141,10 +138,7 @@ namespace ProteinFileReader
         /// <value></value>
         /// <returns></returns>
         /// <remarks></remarks>
-        public int LinesRead
-        {
-            get { return mFileLinesRead; }
-        }
+        public int LinesRead => mFileLinesRead;
 
         /// <summary>
         /// Number of lines skipped due to having an invalid format
@@ -152,10 +146,7 @@ namespace ProteinFileReader
         /// <value></value>
         /// <returns></returns>
         /// <remarks></remarks>
-        public int LineSkipCount
-        {
-            get { return mFileLineSkipCount; }
-        }
+        public int LineSkipCount => mFileLineSkipCount;
 
         /// <summary>
         /// Peptide discriminant score
@@ -163,10 +154,7 @@ namespace ProteinFileReader
         /// <value></value>
         /// <returns></returns>
         /// <remarks></remarks>
-        public float PeptideDiscriminantScore
-        {
-            get { return mCurrentEntry.DiscriminantScore; }
-        }
+        public float PeptideDiscriminantScore => mCurrentEntry.DiscriminantScore;
 
         /// <summary>
         /// Peptide mass
@@ -174,10 +162,7 @@ namespace ProteinFileReader
         /// <value></value>
         /// <returns></returns>
         /// <remarks></remarks>
-        public double PeptideMass
-        {
-            get { return mCurrentEntry.Mass; }
-        }
+        public double PeptideMass => mCurrentEntry.Mass;
 
         /// <summary>
         /// Peptide normalized elution time (NET)
@@ -185,10 +170,7 @@ namespace ProteinFileReader
         /// <value></value>
         /// <returns></returns>
         /// <remarks></remarks>
-        public float PeptideNET
-        {
-            get { return mCurrentEntry.NET; }
-        }
+        public float PeptideNET => mCurrentEntry.NET;
 
         /// <summary>
         /// Standard deviation of peptide normalized elution time (NET)
@@ -196,10 +178,7 @@ namespace ProteinFileReader
         /// <value></value>
         /// <returns></returns>
         /// <remarks></remarks>
-        public float PeptideNETStDev
-        {
-            get { return mCurrentEntry.NETStDev; }
-        }
+        public float PeptideNETStDev => mCurrentEntry.NETStDev;
 
         /// <summary>
         /// Protein name
@@ -207,10 +186,7 @@ namespace ProteinFileReader
         /// <value></value>
         /// <returns></returns>
         /// <remarks></remarks>
-        public string ProteinName
-        {
-            get { return mCurrentEntry.Name; }
-        }
+        public string ProteinName => mCurrentEntry.Name;
 
         /// <summary>
         /// Protein description
@@ -218,10 +194,7 @@ namespace ProteinFileReader
         /// <value></value>
         /// <returns></returns>
         /// <remarks></remarks>
-        public string ProteinDescription
-        {
-            get { return mCurrentEntry.Description; }
-        }
+        public string ProteinDescription => mCurrentEntry.Description;
 
         /// <summary>
         /// Protein sequence
@@ -229,10 +202,7 @@ namespace ProteinFileReader
         /// <value></value>
         /// <returns></returns>
         /// <remarks></remarks>
-        public string ProteinSequence
-        {
-            get { return mCurrentEntry.Sequence; }
-        }
+        public string ProteinSequence => mCurrentEntry.Sequence;
 
         /// <summary>
         /// Protein Name or Protein Name and Description
@@ -240,20 +210,7 @@ namespace ProteinFileReader
         /// <value></value>
         /// <returns></returns>
         /// <remarks>If file format is eDelimitedFileFormatCode.SequenceOnly, returns the protein sequence</remarks>
-        public virtual string HeaderLine
-        {
-            get
-            {
-                try
-                {
-                    return mCurrentEntry.HeaderLine;
-                }
-                catch (Exception)
-                {
-                    return mCurrentEntry.HeaderLine;
-                }
-            }
-        }
+        public virtual string HeaderLine => mCurrentEntry.HeaderLine;
 
         #endregion
 

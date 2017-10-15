@@ -113,7 +113,7 @@ namespace ProteinFileReader
         /// <remarks>Default is tab</remarks>
         public char Delimiter
         {
-            get { return mDelimiter; }
+            get => mDelimiter;
             set
             {
                 if (value.ToString() != string.Empty)
@@ -131,8 +131,8 @@ namespace ProteinFileReader
         /// <remarks></remarks>
         public eDelimitedFileFormatCode DelimitedFileFormatCode
         {
-            get { return mDelimitedFileFormatCode; }
-            set { mDelimitedFileFormatCode = value; }
+            get => mDelimitedFileFormatCode;
+            set => mDelimitedFileFormatCode = value;
         }
 
         /// <summary>
@@ -189,8 +189,8 @@ namespace ProteinFileReader
         /// <remarks></remarks>
         public bool SkipFirstLine
         {
-            get { return mSkipFirstLine; }
-            set { mSkipFirstLine = value; }
+            get => mSkipFirstLine;
+            set => mSkipFirstLine = value;
         }
 
         #endregion
