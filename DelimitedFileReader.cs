@@ -89,7 +89,12 @@ namespace ProteinFileReader
             /// <summary>
             /// Each line of the file contains a unique id, sequence, mass, and NET
             /// </summary>
-            UniqueID_Sequence_Mass_NET = 7
+            UniqueID_Sequence_Mass_NET = 7,
+
+            /// <summary>
+            /// Each line of the file contains a protein name, description, sequence hash, and sequence
+            /// </summary>
+            ProteinName_Description_Hash_Sequence = 8
         }
 
         #endregion
@@ -154,6 +159,7 @@ namespace ProteinFileReader
                         case eDelimitedFileFormatCode.ProteinName_Sequence:
                             return mCurrentEntry.Name;
                         case eDelimitedFileFormatCode.ProteinName_Description_Sequence:
+                        case eDelimitedFileFormatCode.ProteinName_Description_Hash_Sequence:
                             if (!string.IsNullOrWhiteSpace(mCurrentEntry.Description))
                             {
                                 return mCurrentEntry.Name + mDelimiter + mCurrentEntry.Description;
@@ -264,154 +270,98 @@ namespace ProteinFileReader
 
                             EraseProteinEntry(ref mCurrentEntry);
 
-                            switch (mDelimitedFileFormatCode)
+                    switch (mDelimitedFileFormatCode)
+                    {
+                        case eDelimitedFileFormatCode.SequenceOnly:
+                            if (splitLine.Count >= 1)
                             {
-                                case eDelimitedFileFormatCode.SequenceOnly:
-                                    if (strSplitLine.Length >= 1)
-                                    {
-                                        // Only process the line if the sequence column is not a number (useful for handling incorrect file formats)
-                                        if (!IsNumber(strSplitLine[0]))
-                                        {
-                                            mCurrentEntry.HeaderLine = strLineIn;
-                                            mCurrentEntry.Name = string.Empty;
-                                            mCurrentEntry.Description = string.Empty;
-                                            mCurrentEntry.Sequence = strSplitLine[0];
-                                            blnEntryFound = true;
-                                        }
-                                    }
-
-                                    break;
-                                case eDelimitedFileFormatCode.ProteinName_Sequence:
-                                    if (strSplitLine.Length >= 2)
-                                    {
-                                        // Only process the line if the sequence column is not a number (useful for handling incorrect file formats)
-                                        if (!IsNumber(strSplitLine[1]))
-                                        {
-                                            mCurrentEntry.HeaderLine = strLineIn;
-                                            mCurrentEntry.Name = strSplitLine[0];
-                                            mCurrentEntry.Description = string.Empty;
-                                            mCurrentEntry.Sequence = strSplitLine[1];
-                                            blnEntryFound = true;
-                                        }
-                                    }
-                                    break;
-                                case eDelimitedFileFormatCode.ProteinName_Description_Sequence:
-                                    if (strSplitLine.Length >= 3)
-                                    {
-                                        // Only process the line if the sequence column is not a number (useful for handling incorrect file formats)
-                                        if (!IsNumber(strSplitLine[2]))
-                                        {
-                                            mCurrentEntry.HeaderLine = strLineIn;
-                                            mCurrentEntry.Name = strSplitLine[0];
-                                            mCurrentEntry.Description = strSplitLine[1];
-                                            mCurrentEntry.Sequence = strSplitLine[2];
-                                            blnEntryFound = true;
-                                        }
-                                    }
-                                    break;
-                                case eDelimitedFileFormatCode.UniqueID_Sequence:
-                                case eDelimitedFileFormatCode.UniqueID_Sequence_Mass_NET:
-                                    if (strSplitLine.Length >= 2)
-                                    {
-                                        // Only process the line if the first column is numeric (useful for skipping header lines)
-                                        // Also require that the sequence column is not a number
-                                        if (IsNumber(strSplitLine[0]) & !IsNumber(strSplitLine[1]))
-                                        {
-                                            mCurrentEntry.HeaderLine = strLineIn;
-                                            mCurrentEntry.Name = string.Empty;
-                                            mCurrentEntry.Description = string.Empty;
-                                            mCurrentEntry.Sequence = strSplitLine[1];
-                                            try
-                                            {
-                                                mCurrentEntry.UniqueID = int.Parse(strSplitLine[0]);
-                                            }
-                                            catch (Exception)
-                                            {
-                                                mCurrentEntry.UniqueID = 0;
-                                            }
-
-                                            if (strSplitLine.Length >= 4)
-                                            {
-                                                try
-                                                {
-                                                    mCurrentEntry.Mass = double.Parse(strSplitLine[2]);
-                                                }
-                                                catch (Exception)
-                                                {
-                                                }
-
-                                                try
-                                                {
-                                                    mCurrentEntry.NET = float.Parse(strSplitLine[3]);
-                                                }
-                                                catch (Exception)
-                                                {
-                                                }
-                                            }
-                                            blnEntryFound = true;
-                                        }
-                                    }
-                                    break;
-                                case eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID:
-                                case eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET:
-                                case eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET_NETStDev_DiscriminantScore:
-                                    if (strSplitLine.Length >= 3)
-                                    {
-                                        // Only process the line if the third column is numeric (useful for skipping header lines)
-                                        // Also require that the sequence column is not a number
-                                        if (IsNumber(strSplitLine[2]) & !IsNumber(strSplitLine[1]))
-                                        {
-                                            mCurrentEntry.HeaderLine = strLineIn;
-                                            mCurrentEntry.Name = strSplitLine[0];
-                                            mCurrentEntry.Description = string.Empty;
-                                            mCurrentEntry.Sequence = strSplitLine[1];
-                                            try
-                                            {
-                                                mCurrentEntry.UniqueID = int.Parse(strSplitLine[2]);
-                                            }
-                                            catch (Exception)
-                                            {
-                                                mCurrentEntry.UniqueID = 0;
-                                            }
-
-                                            if (strSplitLine.Length >= 5)
-                                            {
-                                                try
-                                                {
-                                                    mCurrentEntry.Mass = double.Parse(strSplitLine[3]);
-                                                    mCurrentEntry.NET = float.Parse(strSplitLine[4]);
-                                                }
-                                                catch (Exception)
-                                                {
-                                                }
-
-                                                if (strSplitLine.Length >= 7)
-                                                {
-                                                    try
-                                                    {
-                                                        mCurrentEntry.NETStDev = float.Parse(strSplitLine[5]);
-                                                        mCurrentEntry.DiscriminantScore = float.Parse(strSplitLine[6]);
-                                                    }
-                                                    catch (Exception)
-                                                    {
-                                                    }
-                                                }
-                                            }
-                                            blnEntryFound = true;
-                                        }
-                                    }
-                                    break;
-                                default:
-                                    Debug.Assert(false, "Unknown file format code: " + mDelimitedFileFormatCode);
-                                    blnEntryFound = false;
-                                    break;
+                                entryFound = ParseNameDescriptionSequenceLine(dataLine, splitLine, -1, -1, 0);
                             }
-
-                            if (!blnEntryFound)
+                            break;
+                        case eDelimitedFileFormatCode.ProteinName_Sequence:
+                            if (splitLine.Count >= 2)
                             {
-                                mFileLineSkipCount += 1;
+                                entryFound = ParseNameDescriptionSequenceLine(dataLine, splitLine, 0, -1, 1);
                             }
-                        }
+                            break;
+                        case eDelimitedFileFormatCode.ProteinName_Description_Sequence:
+                            if (splitLine.Count >= 3)
+                            {
+                                entryFound = ParseNameDescriptionSequenceLine(dataLine, splitLine, 0, 1, 2);
+                            }
+                            break;
+                        case eDelimitedFileFormatCode.ProteinName_Description_Hash_Sequence:
+                            if (splitLine.Count >= 4)
+                            {
+                                entryFound = ParseNameDescriptionSequenceLine(dataLine, splitLine, 0, 1, 3);
+                            }
+                            break;
+                        case eDelimitedFileFormatCode.UniqueID_Sequence:
+                        case eDelimitedFileFormatCode.UniqueID_Sequence_Mass_NET:
+                            if (splitLine.Count >= 2)
+                            {
+                                // Only process the line if the first column is numeric (useful for skipping header lines)
+                                // Also require that the sequence column is not a number
+                                if (IsNumber(splitLine[0]) & !IsNumber(splitLine[1]))
+                                {
+                                    entryFound = ParseNameDescriptionSequenceLine(dataLine, splitLine, -1, -1, 1);
+                                    if (!entryFound)
+                                        break;
+
+                                    mCurrentEntry.UniqueID = int.TryParse(splitLine[0], out var id) ? id : 0;
+
+                                    if (splitLine.Count >= 4)
+                                    {
+                                        if (double.TryParse(splitLine[2], out var mass))
+                                            mCurrentEntry.Mass = mass;
+
+                                        if (float.TryParse(splitLine[3], out var normalizedElutionTime))
+                                            mCurrentEntry.NET = normalizedElutionTime;
+                                    }
+
+                                }
+                            }
+                            break;
+                        case eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID:
+                        case eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET:
+                        case eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET_NETStDev_DiscriminantScore:
+                            if (splitLine.Count >= 3)
+                            {
+                                // Only process the line if the third column is numeric (useful for skipping header lines)
+                                // Also require that the sequence column is not a number
+                                if (IsNumber(splitLine[2]) & !IsNumber(splitLine[1]))
+                                {
+                                    entryFound = ParseNameDescriptionSequenceLine(dataLine, splitLine, 0, -1, 1);
+                                    if (!entryFound)
+                                        break;
+
+                                    mCurrentEntry.UniqueID = int.TryParse(splitLine[2], out var id) ? id : 0;
+
+                                    if (splitLine.Count >= 5)
+                                    {
+                                        if (double.TryParse(splitLine[3], out var mass))
+                                            mCurrentEntry.Mass = mass;
+
+                                        if (float.TryParse(splitLine[4], out var normalizedElutionTime))
+                                            mCurrentEntry.NET = normalizedElutionTime;
+
+                                        if (splitLine.Count >= 7)
+                                        {
+                                            if (float.TryParse(splitLine[5], out var netStDev))
+                                                mCurrentEntry.NETStDev = netStDev;
+
+                                            if (float.TryParse(splitLine[6], out var discriminantScore))
+                                                mCurrentEntry.DiscriminantScore = discriminantScore;
+                                        }
+                                    }
+
+                                }
+                            }
+                            break;
+                        default:
+                            throw new Exception("Unknown file format code: " + mDelimitedFileFormatCode);
+                    }
+
                     }
                 }
                 catch (Exception)
@@ -428,6 +378,25 @@ namespace ProteinFileReader
             }
 
             return blnEntryFound;
+
+        private bool ParseNameDescriptionSequenceLine(
+            string dataLine,
+            IList<string> splitLine,
+            int colIndexName,
+            int colIndexDescription,
+            int colIndexSequence)
+        {
+
+            // Only process the line if the sequence column is not a number (useful for handling incorrect file formats)
+            if (IsNumber(splitLine[colIndexSequence]))
+                return false;
+
+            mCurrentEntry.HeaderLine = dataLine;
+            mCurrentEntry.Name = colIndexName >= 0 ? splitLine[colIndexName].Trim() : string.Empty;
+            mCurrentEntry.Description = colIndexDescription >= 0 ? splitLine[colIndexDescription].Trim() : string.Empty;
+            mCurrentEntry.Sequence = splitLine[colIndexSequence];
+
+            return true;
         }
 
         /// <summary>
