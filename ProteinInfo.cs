@@ -1,6 +1,4 @@
 ﻿
-using System.Data;
-
 namespace ProteinFileReader
 {
     /// <summary>
@@ -11,7 +9,7 @@ namespace ProteinFileReader
     {
 
         /// <summary>
-        /// For fasta files, the header line, including the protein header start character; for Delimited files, the entire line
+        /// For Fasta files, the header line, including the protein header start character; for Delimited files, the entire line
         /// </summary>
         public string HeaderLine { get; set; }
 
