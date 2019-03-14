@@ -21,13 +21,13 @@ namespace ProteinReader_UnitTests
         [Test]
         [TestCase(@"Test_Data\JunkTest.fasta",
             "TOM5,TOM5,",
-            "NCU10043.1,IPI:IPI00043226.5,IPI:IPI00177321.1|REFSEQ_XP:XP_168060")]
+            "IPI:IPI00177321.1|REFSEQ_XP:XP_168060,IPI:IPI00043226.5,NCU10043.1")]
         [TestCase(@"Test_Data\Tryp_Pig_Bov.fasta",
             "Contaminant_TRYP_PIG,Contaminant_Trypa1,Contaminant_Trypa2",
-            "Contaminant_K1C10_HUMAN,Contaminant_K1C9_HUMAN,Contaminant_K22E_HUMAN")]
+            "Contaminant_K22E_HUMAN,Contaminant_K1C9_HUMAN,Contaminant_K1C10_HUMAN")]
         [TestCase(@"Test_Data\H_sapiens_Uniprot_SPROT_2017-04-12_excerpt.fasta",
             "1433B_HUMAN,1433E_HUMAN,68MP_HUMAN",
-            "ZSCA4_HUMAN,ZEP2_HUMAN,TKNK_HUMAN")]
+            "TKNK_HUMAN,ZEP2_HUMAN,ZSCA4_HUMAN")]
         public void CheckProteinNames(string fastaFile, string expectedFirstProteinNames, string expectedLastProteinNames)
         {
             var dataFile = FileRefs.GetTestFile(fastaFile);
