@@ -27,34 +27,57 @@ namespace ProteinReader_UnitTests
             Assert.AreEqual(totalResidueCountExpected, totalResidueCount);
         }
 
-        public static void CheckProteinNames(ProteinFileReaderBaseClass reader, string expectedFirstProteinNames, string expectedLastProteinNames)
+        public static void CheckProteinNamesOrSequences(ProteinFileReaderBaseClass reader, string expectedFirstProteinNames, string expectedLastProteinNames, bool checkName = true)
         {
-
-            var proteins = new List<string>();
-
-            while (reader.ReadNextProteinEntry())
-            {
-                proteins.Add(reader.ProteinName);
-            }
 
             var expectedFirstProteins = expectedFirstProteinNames.Split(',').ToList();
             var expectedLastProteins = expectedLastProteinNames.Split(',').ToList();
 
+            var firstProteins = new List<string>();
+            var lastProteins = new Queue<string>();
+
+            while (reader.ReadNextProteinEntry())
+            {
+                string nameOrSequence;
+                if (checkName)
+                {
+                    nameOrSequence= reader.ProteinName;
+                }
+                else
+                {
+                    nameOrSequence= reader.ProteinSequence;
+                }
+
+                lastProteins.Enqueue(nameOrSequence);
+
+                if (lastProteins.Count > expectedLastProteins.Count)
+                    lastProteins.Dequeue();
+
+                if (firstProteins.Count >= expectedFirstProteins.Count)
+                    continue;
+
+                firstProteins.Add(nameOrSequence);
+            }
+
+
             Console.WriteLine("First {0} proteins", expectedFirstProteins.Count);
             for (var i = 0; i < expectedFirstProteins.Count; i++)
             {
-                var proteinName = proteins[i];
-                Console.WriteLine(proteinName);
-                Assert.AreEqual(expectedFirstProteins[i], proteinName);
+                var nameOrSequence = firstProteins[i];
+                Console.WriteLine(nameOrSequence);
+                Assert.AreEqual(expectedFirstProteins[i], nameOrSequence);
             }
 
             Console.WriteLine();
             Console.WriteLine("Last {0} proteins", expectedLastProteins.Count);
             for (var i = 0; i < expectedLastProteins.Count; i++)
             {
-                var proteinName = proteins[proteins.Count - i - 1];
-                Console.WriteLine(proteinName);
-                Assert.AreEqual(expectedLastProteins[i], proteinName);
+                if (string.IsNullOrWhiteSpace(expectedLastProteins[i]))
+                    continue;
+
+                var nameOrSequence = lastProteins.Dequeue();
+                Console.WriteLine(nameOrSequence);
+                Assert.AreEqual(expectedLastProteins[i], nameOrSequence);
             }
         }
 

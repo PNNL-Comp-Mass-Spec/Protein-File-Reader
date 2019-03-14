@@ -34,7 +34,7 @@ namespace ProteinReader_UnitTests
 
             var reader = new ProteinFileReader.FastaFileReader(dataFile.FullName);
 
-            ValidationLogic.CheckProteinNames(reader, expectedFirstProteinNames, expectedLastProteinNames);
+            ValidationLogic.CheckProteinNamesOrSequences(reader, expectedFirstProteinNames, expectedLastProteinNames);
         }
 
         [Test]
