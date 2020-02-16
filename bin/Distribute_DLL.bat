@@ -1,3 +1,17 @@
+@echo off
+
+echo.
+echo.
+echo *****************************************************
+echo ProteinFileReader is now a Nuget package
+echo.
+echo Do not use this batch file to distribute new versions
+echo *****************************************************
+echo.
+
+pause
+goto Done
+
 xcopy ProteinFileReader.dll "F:\Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Common\ProteinFileReader.dll" /Y
 xcopy ProteinFileReader.dll "F:\Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Program\bin\ProteinFileReader.dll" /Y
 xcopy ProteinFileReader.dll "F:\Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_IDPicker_PlugIn\bin\ProteinFileReader.dll" /Y
@@ -67,3 +81,5 @@ rem xcopy ProteinFileReader.dll "F:\Documents\Projects\DataMining\Protein_Sequen
 rem Still .NET 2: xcopy ProteinFileReader.dll "F:\Documents\Projects\DataMining\Residue_Frequency_Summarizer\bin\ProteinFileReader.dll" /Y
 rem Still .NET 2: xcopy ProteinFileReader.dll "F:\Documents\Projects\DataMining\Reverse_Text\bin\ProteinFileReader.dll" /Y
 pause
+
+:Done
