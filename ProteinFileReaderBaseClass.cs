@@ -16,6 +16,8 @@
 using System;
 using System.IO;
 
+// ReSharper disable UnusedMember.Global
+
 [assembly: CLSCompliant(true)]
 
 namespace ProteinFileReader
@@ -28,13 +30,12 @@ namespace ProteinFileReader
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <remarks></remarks>
         protected ProteinFileReaderBaseClass()
         {
             mCurrentEntry = new ProteinInfo("");
         }
 
-        #region "Classwide Variables"
+        #region "Class wide Variables"
 
         /// <summary>
         /// Current entry being read/evaluated
@@ -70,89 +71,58 @@ namespace ProteinFileReader
         /// <summary>
         /// Unique entry ID
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks>Only used for delimited text files of peptides, with a eDelimitedFileFormatCode format that has a UniqueID column</remarks>
+        /// <remarks>Only used for delimited text files of peptides, with a DelimitedFileFormatCode format that has a UniqueID column</remarks>
         public int EntryUniqueID => mCurrentEntry.UniqueID;
 
         /// <summary>
         /// Number of lines read
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public int LinesRead => mFileLinesRead;
 
         /// <summary>
         /// Number of lines skipped due to having an invalid format
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public int LineSkipCount => mFileLineSkipCount;
 
         /// <summary>
         /// Peptide discriminant score
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public float PeptideDiscriminantScore => mCurrentEntry.DiscriminantScore;
 
         /// <summary>
         /// Peptide mass
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public double PeptideMass => mCurrentEntry.Mass;
 
         /// <summary>
         /// Peptide normalized elution time (NET)
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public float PeptideNET => mCurrentEntry.NET;
 
         /// <summary>
         /// Standard deviation of peptide normalized elution time (NET)
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public float PeptideNETStDev => mCurrentEntry.NETStDev;
 
         /// <summary>
         /// Protein name
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public string ProteinName => mCurrentEntry.Name;
 
         /// <summary>
         /// Protein description
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public string ProteinDescription => mCurrentEntry.Description;
 
         /// <summary>
         /// Protein sequence
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public string ProteinSequence => mCurrentEntry.Sequence;
 
         /// <summary>
         /// Protein Name or Protein Name and Description
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks>If file format is eDelimitedFileFormatCode.SequenceOnly, returns the protein sequence</remarks>
+        /// <remarks>If file format is DelimitedFileFormatCode.SequenceOnly, returns the protein sequence</remarks>
         public virtual string HeaderLine => mCurrentEntry.HeaderLine;
 
         #endregion
@@ -160,8 +130,6 @@ namespace ProteinFileReader
         /// <summary>
         /// Close the data file
         /// </summary>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public bool CloseFile()
         {
             try
@@ -176,7 +144,6 @@ namespace ProteinFileReader
             {
                 return false;
             }
-
         }
 
         /// <summary>
@@ -184,7 +151,6 @@ namespace ProteinFileReader
         /// </summary>
         /// <param name="inputFilePath"></param>
         /// <returns>True if success, false if a problem</returns>
-        /// <remarks></remarks>
         public virtual bool OpenFile(string inputFilePath)
         {
             var success = false;
@@ -230,7 +196,6 @@ namespace ProteinFileReader
         /// Percent of the file that has been read
         /// </summary>
         /// <returns>Value between 0 and 100</returns>
-        /// <remarks></remarks>
         public float PercentFileProcessed()
         {
             if (!mFileOpen) return 0;
@@ -245,7 +210,6 @@ namespace ProteinFileReader
         /// Look for the next protein entry
         /// </summary>
         /// <returns>True if an entry is found, otherwise false</returns>
-        /// <remarks></remarks>
         public abstract bool ReadNextProteinEntry();
 
         /// <summary>

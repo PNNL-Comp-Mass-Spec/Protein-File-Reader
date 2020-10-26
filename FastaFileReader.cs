@@ -13,18 +13,18 @@
 // http://www.apache.org/licenses/LICENSE-2.0
 
 using System;
+// ReSharper disable UnusedMember.Global
 
 namespace ProteinFileReader
 {
     /// <summary>
-    /// Class for reading *.fasta files
+    /// Class for reading FASTA files
     /// </summary>
     public sealed class FastaFileReader : ProteinFileReaderBaseClass
     {
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <remarks></remarks>
         public FastaFileReader()
         {
             InitializeLocalVariables();
@@ -46,11 +46,15 @@ namespace ProteinFileReader
         /// Each protein description line in the Fasta file should start with a > symbol
         /// </summary>
         private const char PROTEIN_LINE_START_CHAR = '>';
+
+        /// <summary>
+        /// Character that denotes the end of the protein name
+        /// </summary>
         private const char PROTEIN_LINE_ACCESSION_TERMINATOR = ' ';
 
         #endregion
 
-        #region "Classwide Variables"
+        #region "Class wide Variables"
 
         /// <summary>
         /// Character that indicates the start of a data line with protein name (accession) and optionally description
@@ -74,17 +78,11 @@ namespace ProteinFileReader
         /// <summary>
         /// Header line (protein name and description), without the start character (&lt;)
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public override string HeaderLine => GetHeaderLine(false);
 
         /// <summary>
         /// Character that precedes each header line (the line with the protein name and description)
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public char ProteinLineStartChar
         {
             get => mProteinLineStartChar;
@@ -100,9 +98,6 @@ namespace ProteinFileReader
         /// <summary>
         /// The character that follows the protein name; always a space
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public char ProteinLineAccessionEndChar
         {
             get => mProteinLineAccessionEndChar;
@@ -147,11 +142,14 @@ namespace ProteinFileReader
             return description;
         }
 
+        /// <summary>
+        /// Extract the accession name from the header line by looking for mProteinLineAccessionEndChar
+        /// </summary>
+        /// <param name="headerLine"></param>
+        /// <returns>Accession (protein) name</returns>
+        /// <remarks>HeaderLine should not start with the > character; it should have already been removed when the file was read</remarks>
         private string ExtractAccessionNameFromHeader(string headerLine)
         {
-            // Note: headerLine should not start with the > character; it should have already been removed when the file was read
-            // Look for mProteinLineAccessionEndChar in headerLine
-
             var accessionName = headerLine;
 
             try
@@ -184,8 +182,6 @@ namespace ProteinFileReader
         /// Header line (protein name and description)
         /// </summary>
         /// <param name="includeStartChar">If true then include the start character (&lt;)</param>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public string GetHeaderLine(bool includeStartChar)
         {
             try
@@ -215,7 +211,6 @@ namespace ProteinFileReader
         /// Reads the next entry in a Fasta file
         /// </summary>
         /// <returns>True if an entry is found, otherwise false</returns>
-        /// <remarks></remarks>
         public override bool ReadNextProteinEntry()
         {
             mCurrentEntry.Clear();

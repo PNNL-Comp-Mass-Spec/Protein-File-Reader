@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+// ReSharper disable UnusedMember.Global
 
 namespace ProteinFileReader
 {
@@ -99,7 +100,7 @@ namespace ProteinFileReader
 
         #endregion
 
-        #region "Classwide Variables"
+        #region "Class wide Variables"
 
         private char mDelimiter;
         private bool mFirstLineSkipped;
@@ -111,8 +112,6 @@ namespace ProteinFileReader
         /// <summary>
         /// Delimiter between columns
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
         /// <remarks>Default is tab</remarks>
         public char Delimiter
         {
@@ -134,9 +133,7 @@ namespace ProteinFileReader
         /// <summary>
         /// Protein Name or Protein Name and Description
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks>If file format is eDelimitedFileFormatCode.SequenceOnly, returns the protein sequence</remarks>
+        /// <remarks>If file format is DelimitedFileFormatCode.SequenceOnly, returns the protein sequence</remarks>
         public override string HeaderLine
         {
             get
@@ -199,7 +196,6 @@ namespace ProteinFileReader
         /// Determine if the provided string can be parsed as a number
         /// </summary>
         /// <param name="text"></param>
-        /// <returns></returns>
         private bool IsNumber(string text)
         {
             return double.TryParse(text, out _);
@@ -384,7 +380,6 @@ namespace ProteinFileReader
             int colIndexDescription,
             int colIndexSequence)
         {
-
             // Only process the line if the sequence column is not a number (useful for handling incorrect file formats)
             if (IsNumber(splitLine[colIndexSequence]))
                 return false;
@@ -402,7 +397,6 @@ namespace ProteinFileReader
         /// </summary>
         /// <param name="inputFilePath"></param>
         /// <returns>True if success, false if a problem</returns>
-        /// <remarks></remarks>
         public override bool OpenFile(string inputFilePath)
         {
             // Reset the first line tracking variable
