@@ -13,6 +13,8 @@
 // http://www.apache.org/licenses/LICENSE-2.0
 
 using System;
+using System.Text;
+
 // ReSharper disable UnusedMember.Global
 
 namespace ProteinFileReader
@@ -36,6 +38,7 @@ namespace ProteinFileReader
         /// <param name="fastaFilePath"></param>
         public FastaFileReader(string fastaFilePath)
         {
+            mProteinResidues = new StringBuilder();
             InitializeLocalVariables();
             OpenFile(fastaFilePath);
         }
@@ -68,6 +71,11 @@ namespace ProteinFileReader
         /// <remarks>Typically a space</remarks>
         private char mProteinLineAccessionEndChar;
 
+        /// <summary>
+        /// Residues for the current entry
+        /// </summary>
+        /// <remarks>Copied to mCurrentEntry.Sequence once all residues have been read</remarks>
+        private readonly StringBuilder mProteinResidues;
 
         private string mCachedHeaderLine;
 
@@ -256,6 +264,9 @@ namespace ProteinFileReader
                     mCurrentEntry.Name = ExtractAccessionNameFromHeader(dataLine);
                     mCurrentEntry.Description = ExtractDescriptionFromHeader(dataLine);
                     mCurrentEntry.Sequence = string.Empty;
+
+                    mProteinResidues.Clear();
+
                     proteinEntryFound = true;
 
                     // Now continue reading until the next protein header start character is found
@@ -280,8 +291,10 @@ namespace ProteinFileReader
                         }
 
                         // dataLine2 has additional residues for the current protein
-                        mCurrentEntry.Sequence += dataLine2;
+                        mProteinResidues.Append(dataLine2);
                     }
+
+                    mCurrentEntry.Sequence = mProteinResidues.ToString();
                 }
             }
             catch (Exception)
