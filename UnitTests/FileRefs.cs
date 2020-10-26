@@ -6,9 +6,8 @@ using NUnit.Framework;
 
 namespace ProteinReader_UnitTests
 {
-    internal class FileRefs
+    internal static class FileRefs
     {
-
         public const string SHARE_PATH = @"\\proto-2\unitTest_Files\Protein_File_Reader\";
 
         public static FileInfo GetTestFile(string relativeFilePath)
@@ -39,23 +38,26 @@ namespace ProteinReader_UnitTests
                 relativePathsToCheck.Add(relativeFilePath);
             }
 
-            var parentToCheck = dataFile.Directory.Parent;
-            while (parentToCheck != null)
+            if (dataFile.Directory != null)
             {
-                foreach (var relativePath in relativePathsToCheck)
+                var parentToCheck = dataFile.Directory.Parent;
+                while (parentToCheck != null)
                 {
-                    var alternateFile = new FileInfo(Path.Combine(parentToCheck.FullName, relativePath));
-                    if (alternateFile.Exists)
+                    foreach (var relativePath in relativePathsToCheck)
                     {
+                        var alternateFile = new FileInfo(Path.Combine(parentToCheck.FullName, relativePath));
+                        if (alternateFile.Exists)
+                        {
 #if DEBUG
-                        Console.WriteLine("... found at " + alternateFile.FullName);
-                        Console.WriteLine();
+                            Console.WriteLine("... found at " + alternateFile.FullName);
+                            Console.WriteLine();
 #endif
-                        return alternateFile;
+                            return alternateFile;
+                        }
                     }
-                }
 
-                parentToCheck = parentToCheck.Parent;
+                    parentToCheck = parentToCheck.Parent;
+                }
             }
 
             foreach (var relativePath in relativePathsToCheck)
