@@ -17,20 +17,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+
 namespace ProteinFileReader
 {
     /// <summary>
     /// Class for reading tab-delimited protein files
     /// </summary>
-    public sealed class DelimitedFileReader : ProteinFileReaderBaseClass
+    public sealed class DelimitedProteinFileReader : ProteinFileReaderBaseClass
     {
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <remarks></remarks>
-        public DelimitedFileReader()
+        public DelimitedProteinFileReader()
         {
-            InitializeLocalVariables(eDelimitedFileFormatCode.ProteinName_Description_Sequence);
+            InitializeLocalVariables(ProteinFileFormatCode.ProteinName_Description_Sequence);
         }
 
         /// <summary>
@@ -38,20 +38,18 @@ namespace ProteinFileReader
         /// </summary>
         /// <param name="fastaFilePath"></param>
         /// <param name="fileFormat"></param>
-        public DelimitedFileReader(string fastaFilePath, eDelimitedFileFormatCode fileFormat = eDelimitedFileFormatCode.ProteinName_Description_Sequence)
+        public DelimitedProteinFileReader(string fastaFilePath, ProteinFileFormatCode fileFormat = ProteinFileFormatCode.ProteinName_Description_Sequence)
         {
             InitializeLocalVariables(fileFormat);
             OpenFile(fastaFilePath);
         }
-
 
         #region "Constants and Enums"
 
         /// <summary>
         /// Columns present in the delimited text file
         /// </summary>
-        /// <remarks></remarks>
-        public enum eDelimitedFileFormatCode
+        public enum ProteinFileFormatCode
         {
             /// <summary>
             /// File contains protein sequences, one per line
@@ -104,7 +102,6 @@ namespace ProteinFileReader
         #region "Classwide Variables"
 
         private char mDelimiter;
-        private eDelimitedFileFormatCode mDelimitedFileFormatCode;
         private bool mSkipFirstLine;
         private bool mFirstLineSkipped;
 
@@ -133,14 +130,7 @@ namespace ProteinFileReader
         /// <summary>
         /// Delimited file format code
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks></remarks>
-        public eDelimitedFileFormatCode DelimitedFileFormatCode
-        {
-            get => mDelimitedFileFormatCode;
-            set => mDelimitedFileFormatCode = value;
-        }
+        public ProteinFileFormatCode DelimitedFileFormatCode { get; set; }
 
         /// <summary>
         /// Protein Name or Protein Name and Description
@@ -154,14 +144,16 @@ namespace ProteinFileReader
             {
                 try
                 {
-                    switch (mDelimitedFileFormatCode)
+                    switch (DelimitedFileFormatCode)
                     {
-                        case eDelimitedFileFormatCode.SequenceOnly:
+                        case ProteinFileFormatCode.SequenceOnly:
                             return mCurrentEntry.HeaderLine;
-                        case eDelimitedFileFormatCode.ProteinName_Sequence:
+
+                        case ProteinFileFormatCode.ProteinName_Sequence:
                             return mCurrentEntry.Name;
-                        case eDelimitedFileFormatCode.ProteinName_Description_Sequence:
-                        case eDelimitedFileFormatCode.ProteinName_Description_Hash_Sequence:
+
+                        case ProteinFileFormatCode.ProteinName_Description_Sequence:
+                        case ProteinFileFormatCode.ProteinName_Description_Hash_Sequence:
                             if (!string.IsNullOrWhiteSpace(mCurrentEntry.Description))
                             {
                                 return mCurrentEntry.Name + mDelimiter + mCurrentEntry.Description;
@@ -170,15 +162,18 @@ namespace ProteinFileReader
                             {
                                 return mCurrentEntry.Name;
                             }
-                        case eDelimitedFileFormatCode.UniqueID_Sequence:
-                        case eDelimitedFileFormatCode.UniqueID_Sequence_Mass_NET:
+
+                        case ProteinFileFormatCode.UniqueID_Sequence:
+                        case ProteinFileFormatCode.UniqueID_Sequence_Mass_NET:
                             return mCurrentEntry.Name;
-                        case eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID:
-                        case eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET:
-                        case eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET_NETStDev_DiscriminantScore:
+
+                        case ProteinFileFormatCode.ProteinName_PeptideSequence_UniqueID:
+                        case ProteinFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET:
+                        case ProteinFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET_NETStDev_DiscriminantScore:
                             return mCurrentEntry.Name + mDelimiter + mCurrentEntry.UniqueID;
+
                         default:
-                            throw new Exception("Unknown file format code: " + mDelimitedFileFormatCode);
+                            throw new Exception("Unknown file format code: " + DelimitedFileFormatCode);
                     }
                 }
                 catch (Exception)
@@ -202,10 +197,10 @@ namespace ProteinFileReader
 
         #endregion
 
-        private void InitializeLocalVariables(eDelimitedFileFormatCode fileFormat)
+        private void InitializeLocalVariables(ProteinFileFormatCode fileFormat)
         {
             mDelimiter = '\t';
-            mDelimitedFileFormatCode = fileFormat;
+            DelimitedFileFormatCode = fileFormat;
         }
 
         /// <summary>
@@ -226,7 +221,7 @@ namespace ProteinFileReader
         public override bool ReadNextProteinEntry()
         {
             const int MAX_SPLIT_LINE_COUNT = 8;
-            char[] sepChars =  {mDelimiter };
+            char[] sepChars = { mDelimiter };
 
             var entryFound = false;
 
@@ -240,7 +235,7 @@ namespace ProteinFileReader
 
             try
             {
-                if (mSkipFirstLine & !mFirstLineSkipped)
+                if (SkipFirstLine && !mFirstLineSkipped)
                 {
                     mFirstLineSkipped = true;
 
@@ -272,34 +267,38 @@ namespace ProteinFileReader
 
                     mCurrentEntry.Clear();
 
-                    switch (mDelimitedFileFormatCode)
+                    switch (DelimitedFileFormatCode)
                     {
-                        case eDelimitedFileFormatCode.SequenceOnly:
+                        case ProteinFileFormatCode.SequenceOnly:
                             if (splitLine.Count >= 1)
                             {
                                 entryFound = ParseNameDescriptionSequenceLine(dataLine, splitLine, -1, -1, 0);
                             }
                             break;
-                        case eDelimitedFileFormatCode.ProteinName_Sequence:
+
+                        case ProteinFileFormatCode.ProteinName_Sequence:
                             if (splitLine.Count >= 2)
                             {
                                 entryFound = ParseNameDescriptionSequenceLine(dataLine, splitLine, 0, -1, 1);
                             }
                             break;
-                        case eDelimitedFileFormatCode.ProteinName_Description_Sequence:
+
+                        case ProteinFileFormatCode.ProteinName_Description_Sequence:
                             if (splitLine.Count >= 3)
                             {
                                 entryFound = ParseNameDescriptionSequenceLine(dataLine, splitLine, 0, 1, 2);
                             }
                             break;
-                        case eDelimitedFileFormatCode.ProteinName_Description_Hash_Sequence:
+
+                        case ProteinFileFormatCode.ProteinName_Description_Hash_Sequence:
                             if (splitLine.Count >= 4)
                             {
                                 entryFound = ParseNameDescriptionSequenceLine(dataLine, splitLine, 0, 1, 3);
                             }
                             break;
-                        case eDelimitedFileFormatCode.UniqueID_Sequence:
-                        case eDelimitedFileFormatCode.UniqueID_Sequence_Mass_NET:
+
+                        case ProteinFileFormatCode.UniqueID_Sequence:
+                        case ProteinFileFormatCode.UniqueID_Sequence_Mass_NET:
                             if (splitLine.Count >= 2)
                             {
                                 // Only process the line if the first column is numeric (useful for skipping header lines)
@@ -320,13 +319,13 @@ namespace ProteinFileReader
                                         if (float.TryParse(splitLine[3], out var normalizedElutionTime))
                                             mCurrentEntry.NET = normalizedElutionTime;
                                     }
-
                                 }
                             }
                             break;
-                        case eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID:
-                        case eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET:
-                        case eDelimitedFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET_NETStDev_DiscriminantScore:
+
+                        case ProteinFileFormatCode.ProteinName_PeptideSequence_UniqueID:
+                        case ProteinFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET:
+                        case ProteinFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET_NETStDev_DiscriminantScore:
                             if (splitLine.Count >= 3)
                             {
                                 // Only process the line if the third column is numeric (useful for skipping header lines)
@@ -360,8 +359,9 @@ namespace ProteinFileReader
                                 }
                             }
                             break;
+
                         default:
-                            throw new Exception("Unknown file format code: " + mDelimitedFileFormatCode);
+                            throw new Exception("Unknown file format code: " + DelimitedFileFormatCode);
                     }
 
                     if (!entryFound)
