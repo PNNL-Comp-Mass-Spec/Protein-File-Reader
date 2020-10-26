@@ -6,11 +6,10 @@ using ProteinFileReader;
 
 namespace ProteinReader_UnitTests
 {
-    internal class ValidationLogic
+    internal static class ValidationLogic
     {
         public static void CheckProteinStats(ProteinFileReaderBaseClass reader, int proteinCountExpected, int totalResidueCountExpected)
         {
-
             var proteins = new List<string>();
             var totalResidueCount = 0;
 
@@ -27,14 +26,24 @@ namespace ProteinReader_UnitTests
             Assert.AreEqual(totalResidueCountExpected, totalResidueCount);
         }
 
-        public static void CheckProteinNamesOrSequences(ProteinFileReaderBaseClass reader, string expectedFirstProteinNames, string expectedLastProteinNames, bool checkName = true)
+        /// <summary>
+        /// Verify that the file starts with and ends with the expected proteins
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="expectedFirstProteinNamesOrSequences">Comma separated list of protein names or sequences that should be at the start of the file</param>
+        /// <param name="expectedLastProteinNamesOrSequences">Comma separated list of protein names or sequences that should be at the end of the file</param>
+        /// <param name="checkName">When true, checking protein names; when false, checking protein sequences</param>
+        public static void CheckProteinNamesOrSequences(
+            ProteinFileReaderBaseClass reader,
+            string expectedFirstProteinNamesOrSequences,
+            string expectedLastProteinNamesOrSequences,
+            bool checkName = true)
         {
+            var expectedFirstNamesOrSequences = expectedFirstProteinNamesOrSequences.Split(',').ToList();
+            var expectedLastNamesOrSequences = expectedLastProteinNamesOrSequences.Split(',').ToList();
 
-            var expectedFirstProteins = expectedFirstProteinNames.Split(',').ToList();
-            var expectedLastProteins = expectedLastProteinNames.Split(',').ToList();
-
-            var firstProteins = new List<string>();
-            var lastProteins = new Queue<string>();
+            var firstItems = new List<string>();
+            var lastItems = new Queue<string>();
 
             while (reader.ReadNextProteinEntry())
             {
@@ -48,42 +57,53 @@ namespace ProteinReader_UnitTests
                     nameOrSequence= reader.ProteinSequence;
                 }
 
-                lastProteins.Enqueue(nameOrSequence);
+                lastItems.Enqueue(nameOrSequence);
 
-                if (lastProteins.Count > expectedLastProteins.Count)
-                    lastProteins.Dequeue();
+                if (lastItems.Count > expectedLastNamesOrSequences.Count)
+                    lastItems.Dequeue();
 
-                if (firstProteins.Count >= expectedFirstProteins.Count)
+                if (firstItems.Count >= expectedFirstNamesOrSequences.Count)
                     continue;
 
-                firstProteins.Add(nameOrSequence);
+                firstItems.Add(nameOrSequence);
             }
 
+            string itemDescription;
+            if (checkName)
+                itemDescription = expectedFirstNamesOrSequences.Count > 1 ? "proteins" : "protein";
+            else
+                itemDescription = expectedFirstNamesOrSequences.Count > 1 ? "sequences" : "sequence";
 
-            Console.WriteLine("First {0} proteins", expectedFirstProteins.Count);
-            for (var i = 0; i < expectedFirstProteins.Count; i++)
+            Console.WriteLine("First {0} {1}", expectedFirstNamesOrSequences.Count, itemDescription);
+            for (var i = 0; i < expectedFirstNamesOrSequences.Count; i++)
             {
-                var nameOrSequence = firstProteins[i];
+                var nameOrSequence = firstItems[i];
                 Console.WriteLine(nameOrSequence);
-                Assert.AreEqual(expectedFirstProteins[i], nameOrSequence);
+                Assert.AreEqual(expectedFirstNamesOrSequences[i], nameOrSequence);
             }
 
             Console.WriteLine();
-            Console.WriteLine("Last {0} proteins", expectedLastProteins.Count);
-            for (var i = 0; i < expectedLastProteins.Count; i++)
+            Console.WriteLine("Last {0} {1}", expectedLastNamesOrSequences.Count, itemDescription);
+            foreach (var expectedProtein in expectedLastNamesOrSequences)
             {
-                if (string.IsNullOrWhiteSpace(expectedLastProteins[i]))
+                if (string.IsNullOrWhiteSpace(expectedProtein))
                     continue;
 
-                var nameOrSequence = lastProteins.Dequeue();
+                var nameOrSequence = lastItems.Dequeue();
                 Console.WriteLine(nameOrSequence);
-                Assert.AreEqual(expectedLastProteins[i], nameOrSequence);
+                Assert.AreEqual(expectedProtein, nameOrSequence);
             }
         }
 
+        /// <summary>
+        /// Verify that the file contains the given protein names and descriptions (anywhere in the file)
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="proteinNames">Delimited list of protein names</param>
+        /// <param name="proteinDescriptions">Delimited list of protein descriptions</param>
+        /// <param name="delimiter">Delimiter to use</param>
         public static void CheckProteinDescription(ProteinFileReaderBaseClass reader, string proteinNames, string proteinDescriptions, char delimiter)
         {
-
             var proteinsToFind = new Dictionary<string, string>();
 
             var proteinNameList = proteinNames.Split(delimiter);
@@ -96,25 +116,27 @@ namespace ProteinReader_UnitTests
                 proteinsToFind.Add(proteinNameList[i], proteinDescriptionList[i]);
             }
 
-            var proteins = new Dictionary<string, string>();
+            var proteinsInFile = new Dictionary<string, string>();
 
             while (reader.ReadNextProteinEntry())
             {
                 if (!proteinsToFind.ContainsKey(reader.ProteinName))
                     continue;
 
-                proteins.Add(reader.ProteinName, reader.ProteinDescription);
+                proteinsInFile.Add(reader.ProteinName, reader.ProteinDescription);
             }
 
             foreach (var expectedProtein in proteinsToFind)
             {
-                if (!proteins.TryGetValue(expectedProtein.Key, out var description))
+                var proteinName = expectedProtein.Key;
+                var proteinDescription = expectedProtein.Value;
+
+                if (!proteinsInFile.TryGetValue(proteinName, out var description))
                     Assert.Fail("Expected protein not found: " + expectedProtein);
 
-                Console.WriteLine(expectedProtein.Key + ": " + description);
-                Assert.AreEqual(expectedProtein.Value, description);
+                Console.WriteLine(proteinName + ": " + description);
+                Assert.AreEqual(proteinDescription, description);
             }
-
         }
     }
 }
