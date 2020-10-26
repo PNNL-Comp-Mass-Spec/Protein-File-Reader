@@ -234,7 +234,7 @@ namespace ProteinFileReader
                         if (!string.IsNullOrWhiteSpace(headerLine))
                         {
                             mFileBytesRead += headerLine.Length + 2;
-                            mFileLinesRead += 1;
+                            mFileLinesRead++;
                         }
                     }
                 }
@@ -248,7 +248,7 @@ namespace ProteinFileReader
                         continue;
 
                     mFileBytesRead += lineIn.Length + 2;
-                    mFileLinesRead += 1;
+                    mFileLinesRead++;
 
                     var dataLine = lineIn.TrimEnd();
                     var splitLine = dataLine.Split(sepChars, MAX_SPLIT_LINE_COUNT).ToList();
@@ -291,7 +291,7 @@ namespace ProteinFileReader
                             {
                                 // Only process the line if the first column is numeric (useful for skipping header lines)
                                 // Also require that the sequence column is not a number
-                                if (IsNumber(splitLine[0]) & !IsNumber(splitLine[1]))
+                                if (IsNumber(splitLine[0]) && !IsNumber(splitLine[1]))
                                 {
                                     entryFound = ParseNameDescriptionSequenceLine(dataLine, splitLine, -1, -1, 1);
                                     if (!entryFound)
@@ -318,7 +318,7 @@ namespace ProteinFileReader
                             {
                                 // Only process the line if the third column is numeric (useful for skipping header lines)
                                 // Also require that the sequence column is not a number
-                                if (IsNumber(splitLine[2]) & !IsNumber(splitLine[1]))
+                                if (IsNumber(splitLine[2]) && !IsNumber(splitLine[1]))
                                 {
                                     entryFound = ParseNameDescriptionSequenceLine(dataLine, splitLine, 0, -1, 1);
                                     if (!entryFound)
@@ -343,7 +343,6 @@ namespace ProteinFileReader
                                                 mCurrentEntry.DiscriminantScore = discriminantScore;
                                         }
                                     }
-
                                 }
                             }
                             break;
@@ -354,7 +353,7 @@ namespace ProteinFileReader
 
                     if (!entryFound)
                     {
-                        mFileLineSkipCount += 1;
+                        mFileLineSkipCount++;
                     }
                 }
             }

@@ -32,7 +32,7 @@ namespace ProteinFileReader
         /// </summary>
         protected ProteinFileReaderBaseClass()
         {
-            mCurrentEntry = new ProteinInfo("");
+            mCurrentEntry = new ProteinInfo(string.Empty);
         }
 
         #region "Class wide Variables"
@@ -198,7 +198,8 @@ namespace ProteinFileReader
         /// <returns>Value between 0 and 100</returns>
         public float PercentFileProcessed()
         {
-            if (!mFileOpen) return 0;
+            if (!mFileOpen)
+                return 0;
 
             if (mProteinFileInputStream.BaseStream.Length == 0)
                 return 0;
@@ -218,7 +219,9 @@ namespace ProteinFileReader
         public void Dispose()
         {
             if (mFileOpen)
+            {
                 CloseFile();
+            }
         }
     }
 }

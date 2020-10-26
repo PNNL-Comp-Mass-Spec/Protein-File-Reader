@@ -239,7 +239,7 @@ namespace ProteinFileReader
                         if (!string.IsNullOrWhiteSpace(lineIn))
                         {
                             mFileBytesRead += lineIn.Length + 2;
-                            mFileLinesRead += 1;
+                            mFileLinesRead++;
                         }
                     }
 
@@ -267,7 +267,7 @@ namespace ProteinFileReader
                             continue;
 
                         mFileBytesRead += lineIn2.Length + 2;
-                        mFileLinesRead += 1;
+                        mFileLinesRead++;
 
                         var dataLine2 = lineIn2.Trim();
 
