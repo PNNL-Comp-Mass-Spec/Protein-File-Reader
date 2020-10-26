@@ -153,43 +153,23 @@ namespace ProteinFileReader
         /// <returns>True if success, false if a problem</returns>
         public virtual bool OpenFile(string inputFilePath)
         {
-            var success = false;
-
             try
             {
-                if (CloseFile())
-                {
-                    mProteinFileInputStream = new StreamReader(new FileStream(inputFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
-                    success = true;
-                }
-            }
-            catch (IOException)
-            {
-                try
-                {
-                    // Try again, this time allowing for read/write access
-                    mProteinFileInputStream = new StreamReader(new FileStream(inputFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
-                    success = true;
-                }
-                catch (Exception)
-                {
-                    success = false;
-                }
-            }
-            catch (Exception)
-            {
-                success = false;
-            }
+                if (!CloseFile())
+                    return false;
 
-            if (success)
-            {
+                mProteinFileInputStream = new StreamReader(new FileStream(inputFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
                 mFileOpen = true;
                 mFileBytesRead = 0;
                 mFileLinesRead = 0;
                 mFileLineSkipCount = 0;
-            }
 
-            return success;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         /// <summary>
