@@ -102,7 +102,6 @@ namespace ProteinFileReader
         #region "Classwide Variables"
 
         private char mDelimiter;
-        private bool mSkipFirstLine;
         private bool mFirstLineSkipped;
 
         #endregion
@@ -186,14 +185,7 @@ namespace ProteinFileReader
         /// <summary>
         /// Controls whether to skip the first line
         /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks></remarks>
-        public bool SkipFirstLine
-        {
-            get => mSkipFirstLine;
-            set => mSkipFirstLine = value;
-        }
+        public bool SkipFirstLine { get; set; }
 
         #endregion
 
