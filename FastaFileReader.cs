@@ -158,8 +158,6 @@ namespace ProteinFileReader
         /// <remarks>HeaderLine should not start with the > character; it should have already been removed when the file was read</remarks>
         private string ExtractAccessionNameFromHeader(string headerLine)
         {
-            var accessionName = headerLine;
-
             try
             {
                 if (headerLine.StartsWith(mProteinLineStartChar.ToString()))
@@ -171,19 +169,16 @@ namespace ProteinFileReader
                 var charIndex = headerLine.IndexOf(mProteinLineAccessionEndChar);
                 if (charIndex > 0)
                 {
-                    accessionName = headerLine.Substring(0, charIndex).Trim();
+                    return headerLine.Substring(0, charIndex).Trim();
                 }
-                else
-                {
-                    accessionName = headerLine;
-                }
+
+                return headerLine;
             }
             catch (Exception)
             {
-                // Ignore any errors
+                // Ignore any errors; return the full line
+                return headerLine;
             }
-
-            return accessionName;
         }
 
         /// <summary>
