@@ -44,6 +44,25 @@ namespace ProteinReader_UnitTests
         // ReSharper disable StringLiteralTypo
         [Test]
         [TestCase(@"Test_Data\Tryp_Pig_Bov.fasta",
+            "Contaminant_TRYP_PIG,Contaminant_Trypa1,Contaminant_Trypa2",
+            "Contaminant_K22E_HUMAN,Contaminant_K1C9_HUMAN,Contaminant_K1C10_HUMAN")]
+        [TestCase(@"Test_Data\H_sapiens_Uniprot_SPROT_2017-04-12_excerpt.fasta",
+            "1433B_HUMAN,1433E_HUMAN,68MP_HUMAN",
+            "TKNK_HUMAN,ZEP2_HUMAN,ZSCA4_HUMAN")]
+        // ReSharper restore StringLiteralTypo
+        public void CheckProteinNamesParameterlessConstructor(string fastaFile, string expectedFirstProteinNames, string expectedLastProteinNames)
+        {
+            var dataFile = FileRefs.GetTestFile(fastaFile);
+
+            var reader = new ProteinFileReader.FastaFileReader();
+            reader.OpenFile(dataFile.FullName);
+
+            ValidationLogic.CheckProteinNamesOrSequences(reader, expectedFirstProteinNames, expectedLastProteinNames);
+        }
+
+        // ReSharper disable StringLiteralTypo
+        [Test]
+        [TestCase(@"Test_Data\Tryp_Pig_Bov.fasta",
             "Contaminant_Trypa1|Contaminant_CTRB_BOVIN",
             "VATVSLPR-like Promega trypsin artifact 1 (871.1) xATVSLPR (PromTArt1)|CHYMOTRYPSINOGEN B (EC 3.4.21.1). - BOS TAURUS (BOVINE).",
             '|')]
