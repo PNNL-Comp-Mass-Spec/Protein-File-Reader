@@ -29,6 +29,7 @@ namespace ProteinFileReader
         /// </summary>
         public FastaFileReader()
         {
+            mProteinResidues = new StringBuilder();
             InitializeLocalVariables();
         }
 
