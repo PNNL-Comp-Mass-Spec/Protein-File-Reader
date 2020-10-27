@@ -357,11 +357,12 @@ namespace ProteinFileReader
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // Error reading the input file
-                // Ignore any errors
                 entryFound = false;
+
+                Console.WriteLine("Exception in DelimitedProteinFileReader.ReadNextProteinEntry: " + ex.Message);
             }
 
             if (!entryFound)

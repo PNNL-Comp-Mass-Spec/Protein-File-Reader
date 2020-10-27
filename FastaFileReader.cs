@@ -293,11 +293,12 @@ namespace ProteinFileReader
                     mCurrentEntry.Sequence = mProteinResidues.ToString();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // Error reading the input file
-                // Ignore any errors
                 proteinEntryFound = false;
+
+                Console.WriteLine("Exception in FastaFileReader.ReadNextProteinEntry: " + ex.Message);
             }
 
             return proteinEntryFound;
