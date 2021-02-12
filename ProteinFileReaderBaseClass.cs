@@ -15,6 +15,7 @@
 
 using System;
 using System.IO;
+using System.IO.Compression;
 
 // ReSharper disable UnusedMember.Global
 
@@ -158,11 +159,28 @@ namespace ProteinFileReader
                 if (!CloseFile())
                     return false;
 
-                mProteinFileInputStream = new StreamReader(new FileStream(inputFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
-                mFileOpen = true;
                 mFileBytesRead = 0;
                 mFileLinesRead = 0;
                 mFileLineSkipCount = 0;
+
+                if (string.IsNullOrWhiteSpace(inputFilePath))
+                    return false;
+
+                Stream fileStream;
+                if (Path.HasExtension(inputFilePath) &&
+                    Path.GetExtension(inputFilePath).Equals(".gz", StringComparison.OrdinalIgnoreCase))
+                {
+                    fileStream = new GZipStream(
+                        new FileStream(inputFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite),
+                        CompressionMode.Decompress);
+                }
+                else
+                {
+                    fileStream = new FileStream(inputFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                }
+
+                mProteinFileInputStream = new StreamReader(fileStream);
+                mFileOpen = true;
 
                 return true;
             }
