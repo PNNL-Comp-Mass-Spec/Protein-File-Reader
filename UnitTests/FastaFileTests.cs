@@ -8,6 +8,7 @@ namespace ProteinReader_UnitTests
         // Ignore Spelling: Promega, neuregulin, isoform
 
         [Test]
+        [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta.gz", 0, 0)]
         [TestCase(@"Test_Data\JunkTest.fasta", 26, 7429)]
         [TestCase(@"Test_Data\Tryp_Pig_Bov.fasta", 16, 4766)]
         [TestCase(@"Test_Data\H_sapiens_Uniprot_SPROT_2017-04-12_excerpt.fasta", 15, 41451)]
@@ -22,6 +23,9 @@ namespace ProteinReader_UnitTests
 
         // ReSharper disable StringLiteralTypo
         [Test]
+        [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta.gz",
+            "sp|P0AF93|RIDA_ECOLI,sp|P0A944|RIMI_ECOLI,sp|P0A7S9|RS13_ECOLI,sp|P77489|PAOC_ECOLI,sp|P0ABF1|PCNB_ECOLI",
+            "sp|P0ACC1|PRMC_ECOLI,sp|P77272|PTYBC_ECOLI,sp|P0ACQ0|RBSR_ECOLI,sp|P0A8A8|RIMP_ECOLI,sp|P76104|RLHA_ECOLI")]
         [TestCase(@"Test_Data\JunkTest.fasta",
             "TOM5,TOM5,,,TOM5,TOM7,TOM22",
             "IPI:IPI00177321.1|REFSEQ_XP:XP_168060,IPI:IPI00043226.5,NCU10043.1")]
@@ -43,6 +47,9 @@ namespace ProteinReader_UnitTests
 
         // ReSharper disable StringLiteralTypo
         [Test]
+        [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta.gz",
+            "sp|P0AF93|RIDA_ECOLI,sp|P0A944|RIMI_ECOLI,sp|P0A7S9|RS13_ECOLI",
+            "sp|P0ACQ0|RBSR_ECOLI,sp|P0A8A8|RIMP_ECOLI,sp|P76104|RLHA_ECOLI")]
         [TestCase(@"Test_Data\Tryp_Pig_Bov.fasta",
             "Contaminant_TRYP_PIG,Contaminant_Trypa1,Contaminant_Trypa2",
             "Contaminant_K22E_HUMAN,Contaminant_K1C9_HUMAN,Contaminant_K1C10_HUMAN")]
@@ -62,6 +69,10 @@ namespace ProteinReader_UnitTests
 
         // ReSharper disable StringLiteralTypo
         [Test]
+        [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta.gz",
+            "sp|P0AF93|RIDA_ECOLI,sp|P0A944|RIMI_ECOLI",
+            "2-iminobutanoate/2-iminopropanoate deaminase OS=Escherichia coli (strain K12) OX=83333 GN=ridA PE=1 SV=2,[Ribosomal protein S18]-alanine N-acetyltransferase OS=Escherichia coli (strain K12) OX=83333 GN=rimI PE=1 SV=1",
+            ',')]
         [TestCase(@"Test_Data\Tryp_Pig_Bov.fasta",
             "Contaminant_Trypa1|Contaminant_CTRB_BOVIN",
             "VATVSLPR-like Promega trypsin artifact 1 (871.1) xATVSLPR (PromTArt1)|CHYMOTRYPSINOGEN B (EC 3.4.21.1). - BOS TAURUS (BOVINE).",

@@ -22,6 +22,9 @@ namespace ProteinReader_UnitTests
             Console.WriteLine("Proteins loaded: " + proteins.Count);
             Console.WriteLine("Total residue count: " + totalResidueCount);
 
+            if (proteinCountExpected == 0 && totalResidueCountExpected == 0)
+                return;
+
             Assert.AreEqual(proteinCountExpected, proteins.Count);
             Assert.AreEqual(totalResidueCountExpected, totalResidueCount);
         }
@@ -42,8 +45,17 @@ namespace ProteinReader_UnitTests
             var expectedFirstNamesOrSequences = expectedFirstProteinNamesOrSequences.Split(',').ToList();
             var expectedLastNamesOrSequences = expectedLastProteinNamesOrSequences.Split(',').ToList();
 
+            if (string.IsNullOrWhiteSpace(expectedFirstProteinNamesOrSequences) && string.IsNullOrWhiteSpace(expectedLastProteinNamesOrSequences))
+            {
+                expectedFirstNamesOrSequences.Clear();
+                expectedLastNamesOrSequences.Clear();
+            }
+
             var firstItems = new List<string>();
             var lastItems = new Queue<string>();
+
+            var firstItemsToStore = expectedFirstNamesOrSequences.Count == 0 ? 5 : expectedFirstNamesOrSequences.Count;
+            var lastItemsToStore = expectedLastNamesOrSequences.Count == 0 ? 5 : expectedLastNamesOrSequences.Count;
 
             while (reader.ReadNextProteinEntry())
             {
@@ -59,13 +71,32 @@ namespace ProteinReader_UnitTests
 
                 lastItems.Enqueue(nameOrSequence);
 
-                if (lastItems.Count > expectedLastNamesOrSequences.Count)
+                if (lastItems.Count > lastItemsToStore)
                     lastItems.Dequeue();
 
-                if (firstItems.Count >= expectedFirstNamesOrSequences.Count)
+                if (firstItems.Count >= firstItemsToStore)
                     continue;
 
                 firstItems.Add(nameOrSequence);
+            }
+
+            if (expectedLastNamesOrSequences.Count == 0 && expectedLastNamesOrSequences.Count == 0)
+            {
+                Console.WriteLine();
+                Console.WriteLine("First {0} proteins", 5);
+                foreach (var nameOrSequence in firstItems)
+                {
+                    Console.WriteLine(nameOrSequence);
+                }
+
+                Console.WriteLine();
+                Console.WriteLine("Last {0} proteins", 5);
+                foreach (var nameOrSequence in lastItems)
+                {
+                    Console.WriteLine(nameOrSequence);
+                }
+
+                return;
             }
 
             string itemDescription;
@@ -106,24 +137,41 @@ namespace ProteinReader_UnitTests
         {
             var proteinsToFind = new Dictionary<string, string>();
 
-            var proteinNameList = proteinNames.Split(delimiter);
-            var proteinDescriptionList = proteinDescriptions.Split(delimiter);
+            var proteinNameList = proteinNames.Split(delimiter).ToList();
+            var proteinDescriptionList = proteinDescriptions.Split(delimiter).ToList();
 
-            Assert.AreEqual(proteinNameList.Length, proteinDescriptionList.Length);
+            if (string.IsNullOrWhiteSpace(proteinNames) && string.IsNullOrWhiteSpace(proteinDescriptions))
+            {
+                proteinNameList.Clear();
+                proteinDescriptionList.Clear();
+            }
 
-            for (var i = 0; i < proteinNameList.Length; i++)
+            Assert.AreEqual(proteinNameList.Count, proteinDescriptionList.Count);
+
+            for (var i = 0; i < proteinNameList.Count; i++)
             {
                 proteinsToFind.Add(proteinNameList[i], proteinDescriptionList[i]);
             }
 
-            var proteinsInFile = new Dictionary<string, string>();
+            var matchedProteinsInFile = new Dictionary<string, string>();
+            var proteinsRead = 0;
 
             while (reader.ReadNextProteinEntry())
             {
+                proteinsRead++;
                 if (!proteinsToFind.ContainsKey(reader.ProteinName))
                     continue;
 
-                proteinsInFile.Add(reader.ProteinName, reader.ProteinDescription);
+                matchedProteinsInFile.Add(reader.ProteinName, reader.ProteinDescription);
+            }
+
+            Console.WriteLine("Read {0} proteins", proteinsRead);
+            Console.WriteLine();
+
+            if (proteinsToFind.Count == 0)
+            {
+                Console.WriteLine("Name verification has been skipped since proteinsToFind is empty");
+                return;
             }
 
             foreach (var expectedProtein in proteinsToFind)
@@ -131,7 +179,7 @@ namespace ProteinReader_UnitTests
                 var proteinName = expectedProtein.Key;
                 var proteinDescription = expectedProtein.Value;
 
-                if (!proteinsInFile.TryGetValue(proteinName, out var description))
+                if (!matchedProteinsInFile.TryGetValue(proteinName, out var description))
                     Assert.Fail("Expected protein not found: " + expectedProtein);
 
                 Console.WriteLine(proteinName + ": " + description);
