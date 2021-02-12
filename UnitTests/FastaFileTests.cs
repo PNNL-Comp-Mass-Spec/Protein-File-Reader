@@ -5,7 +5,12 @@ namespace ProteinReader_UnitTests
     [TestFixture]
     public class FastaFileTests
     {
-        // Ignore Spelling: Promega, neuregulin, isoform
+        // ReSharper disable CommentTypo
+
+        // Ignore Spelling: Promega, neuregulin, isoform, coli, UniProt, sp
+        // Ignore Spelling: iminobutanoate, iminopropanoate, deaminase, acetyltransferase
+
+        // ReSharper restore CommentTypo
 
         [Test]
         [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta.gz", 0, 0)]
