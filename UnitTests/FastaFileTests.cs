@@ -95,5 +95,47 @@ namespace ProteinReader_UnitTests
 
             ValidationLogic.CheckProteinDescription(reader, proteinNames, proteinDescriptions, delimiter);
         }
+
+        [Test]
+        [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta", 250, 5.75)]
+        [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta.gz", 250, 5.58)]
+        [TestCase(@"Test_Data\Tryp_Pig_Bov.fasta", 5, 30.23)]
+        [TestCase(@"Test_Data\H_sapiens_Uniprot_SPROT_2017-04-12_excerpt.fasta", 2, 14.15)]
+        public void TestPercentFileProcessed(string fastaFile, int progressIntervalProteins, double expectedAverageProgressPercentInterval)
+        {
+            var dataFile = FileRefs.GetTestFile(fastaFile);
+
+            var reader = new ProteinFileReader.FastaFileReader(dataFile.FullName);
+
+            var proteinsRead = 0;
+            var lastProgress = 0f;
+            var progressPercentIntervals = new List<double>();
+
+            if (progressIntervalProteins < 1)
+                progressIntervalProteins = 1;
+
+            while (reader.ReadNextProteinEntry())
+            {
+                proteinsRead++;
+                if (proteinsRead % progressIntervalProteins > 0)
+                    continue;
+
+                var percentComplete = reader.PercentFileProcessed();
+                Console.WriteLine("{0:F1}% read", percentComplete);
+
+                var progressInterval = percentComplete - lastProgress;
+                progressPercentIntervals.Add(progressInterval);
+
+                lastProgress = percentComplete;
+            }
+
+            Console.WriteLine("{0:F1}% read at finish", reader.PercentFileProcessed());
+            Console.WriteLine();
+
+            var averageInterval = progressPercentIntervals.Average();
+            Console.WriteLine("Average progress interval: {0:F2}%", averageInterval);
+            if (expectedAverageProgressPercentInterval > 0)
+                Assert.AreEqual(expectedAverageProgressPercentInterval, averageInterval, 0.01);
+        }
     }
 }
