@@ -356,6 +356,11 @@ namespace ProteinFileReader
                         mFileLineSkipCount++;
                     }
                 }
+
+                if (!entryFound)
+                {
+                    AdjustBytesReadForEOF();
+                }
             }
             catch (Exception ex)
             {

@@ -140,6 +140,21 @@ namespace ProteinFileReader
 
         #endregion
 
+        /// <summary>
+        /// Call this method after all proteins have been read from the input file
+        /// </summary>
+        protected void AdjustBytesReadForEOF()
+        {
+            // Update bytes read to assure that PercentFileProcessed() reports 100
+            if (mReadingGzipFile)
+            {
+                mFileBytesRead = (long)(mFileSizeBytes / GZIP_PROGRESS_SCALING_FACTOR);
+            }
+            else
+            {
+                mFileBytesRead = mFileSizeBytes;
+            }
+        }
 
         /// <summary>
         /// Close the data file

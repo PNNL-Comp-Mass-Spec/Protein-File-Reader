@@ -292,6 +292,11 @@ namespace ProteinFileReader
 
                     mCurrentEntry.Sequence = mProteinResidues.ToString();
                 }
+
+                if (!proteinEntryFound)
+                {
+                    AdjustBytesReadForEOF();
+                }
             }
             catch (Exception ex)
             {
