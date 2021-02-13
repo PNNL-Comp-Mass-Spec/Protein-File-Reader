@@ -28,6 +28,8 @@ namespace ProteinFileReader
     /// </summary>
     public abstract class ProteinFileReaderBaseClass : IDisposable
     {
+        private const double GZIP_PROGRESS_SCALING_FACTOR = 0.5;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -69,6 +71,11 @@ namespace ProteinFileReader
         /// Number of bytes in the input file
         /// </summary>
         protected long mFileSizeBytes;
+
+        /// <summary>
+        /// Set to true when reading a gzipped file
+        /// </summary>
+        protected bool mReadingGzipFile;
 
         #endregion
 
@@ -133,6 +140,7 @@ namespace ProteinFileReader
 
         #endregion
 
+
         /// <summary>
         /// Close the data file
         /// </summary>
@@ -175,6 +183,8 @@ namespace ProteinFileReader
                     var gzipFileStream = new FileStream(inputFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                     mFileSizeBytes = gzipFileStream.Length;
 
+                    fileStream = new GZipStream(gzipFileStream, CompressionMode.Decompress);
+                    mReadingGzipFile = true;
                 }
                 else
                 {
@@ -205,7 +215,18 @@ namespace ProteinFileReader
             if (mFileSizeBytes == 0)
                 return 0;
 
-            return Convert.ToSingle(Math.Round((double)mFileBytesRead / mProteinFileInputStream.BaseStream.Length * 100, 2));
+            double scalingFactor;
+            if (mReadingGzipFile)
+            {
+                // Scale the number of bytes down by 50%; this is only an estimate of the compression ratio
+                scalingFactor = GZIP_PROGRESS_SCALING_FACTOR;
+            }
+            else
+            {
+                scalingFactor = 1.0;
+            }
+
+            return Convert.ToSingle(Math.Round(scalingFactor * mFileBytesRead / mFileSizeBytes * 100, 2));
         }
 
         /// <summary>
@@ -223,6 +244,7 @@ namespace ProteinFileReader
             mFileBytesRead = 0;
             mFileLinesRead = 0;
             mFileSizeBytes = 0;
+            mReadingGzipFile = false;
         }
 
         /// <summary>
