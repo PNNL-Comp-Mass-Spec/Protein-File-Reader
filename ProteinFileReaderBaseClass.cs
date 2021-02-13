@@ -65,6 +65,11 @@ namespace ProteinFileReader
         /// </summary>
         protected int mFileLineSkipCount;
 
+        /// <summary>
+        /// Number of bytes in the input file
+        /// </summary>
+        protected long mFileSizeBytes;
+
         #endregion
 
         #region "Interface Functions"
@@ -137,8 +142,7 @@ namespace ProteinFileReader
             {
                 mProteinFileInputStream?.Close();
                 mFileOpen = false;
-                mFileBytesRead = 0;
-                mFileLinesRead = 0;
+                ResetTrackingVariables();
                 return true;
             }
             catch (Exception)
@@ -159,9 +163,7 @@ namespace ProteinFileReader
                 if (!CloseFile())
                     return false;
 
-                mFileBytesRead = 0;
-                mFileLinesRead = 0;
-                mFileLineSkipCount = 0;
+                ResetTrackingVariables();
 
                 if (string.IsNullOrWhiteSpace(inputFilePath))
                     return false;
@@ -170,13 +172,14 @@ namespace ProteinFileReader
                 if (Path.HasExtension(inputFilePath) &&
                     Path.GetExtension(inputFilePath).Equals(".gz", StringComparison.OrdinalIgnoreCase))
                 {
-                    fileStream = new GZipStream(
-                        new FileStream(inputFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite),
-                        CompressionMode.Decompress);
+                    var gzipFileStream = new FileStream(inputFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    mFileSizeBytes = gzipFileStream.Length;
+
                 }
                 else
                 {
                     fileStream = new FileStream(inputFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    mFileSizeBytes = fileStream.Length;
                 }
 
                 mProteinFileInputStream = new StreamReader(fileStream);
@@ -199,7 +202,7 @@ namespace ProteinFileReader
             if (!mFileOpen)
                 return 0;
 
-            if (mProteinFileInputStream.BaseStream.Length == 0)
+            if (mFileSizeBytes == 0)
                 return 0;
 
             return Convert.ToSingle(Math.Round((double)mFileBytesRead / mProteinFileInputStream.BaseStream.Length * 100, 2));
@@ -210,6 +213,17 @@ namespace ProteinFileReader
         /// </summary>
         /// <returns>True if an entry is found, otherwise false</returns>
         public abstract bool ReadNextProteinEntry();
+
+        /// <summary>
+        /// Reset variables that track bytes and lines read,
+        /// input file size, and whether or not we're reading a gzipped file
+        /// </summary>
+        protected void ResetTrackingVariables()
+        {
+            mFileBytesRead = 0;
+            mFileLinesRead = 0;
+            mFileSizeBytes = 0;
+        }
 
         /// <summary>
         /// Properly close open file handles
