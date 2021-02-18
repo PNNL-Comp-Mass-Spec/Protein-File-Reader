@@ -229,6 +229,8 @@ namespace ProteinFileReader
 
             try
             {
+                var proteinLineStartChar = mProteinLineStartChar.ToString();
+
                 while (!proteinEntryFound && !mProteinFileInputStream.EndOfStream)
                 {
                     string lineIn;
@@ -283,18 +285,20 @@ namespace ProteinFileReader
                         }
 
                         mFileBytesRead += lineIn2.Length + 2;
-                        var dataLine2 = lineIn2.Trim();
 
-                        if (dataLine2.StartsWith(mProteinLineStartChar.ToString()))
+                        if (lineIn2.TrimStart().StartsWith(proteinLineStartChar))
                         {
                             // Found the next protein entry
                             // Store in mCachedHeaderLine and jump out of the loop
-                            mCachedHeaderLine = string.Copy(dataLine2);
+                            mCachedHeaderLine = string.Copy(lineIn2);
                             break;
                         }
 
-                        // dataLine2 has additional residues for the current protein
-                        mProteinResidues.Append(dataLine2);
+                        if (DiscardProteinResidues)
+                            continue;
+
+                        // lineIn2 has additional residues for the current protein
+                        mProteinResidues.Append(lineIn2.Trim());
                     }
 
                     mCurrentEntry.Sequence = mProteinResidues.ToString();

@@ -31,6 +31,13 @@ namespace ProteinFileReader
         private const double GZIP_PROGRESS_SCALING_FACTOR = 0.5;
 
         /// <summary>
+        /// When true, only read protein names and descriptions
+        /// Ignore protein residues
+        /// </summary>
+        /// <remarks>This will result in a slightly faster parsing of the input file</remarks>
+        public bool DiscardProteinResidues { get; set; }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         protected ProteinFileReaderBaseClass()

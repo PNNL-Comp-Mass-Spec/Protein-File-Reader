@@ -400,7 +400,9 @@ namespace ProteinFileReader
             mCurrentEntry.HeaderLine = dataLine;
             mCurrentEntry.Name = colIndexName >= 0 ? splitLine[colIndexName].Trim() : string.Empty;
             mCurrentEntry.Description = colIndexDescription >= 0 ? splitLine[colIndexDescription].Trim() : string.Empty;
-            mCurrentEntry.Sequence = splitLine[colIndexSequence];
+
+            if (!DiscardProteinResidues)
+                mCurrentEntry.Sequence = splitLine[colIndexSequence];
 
             return true;
         }
