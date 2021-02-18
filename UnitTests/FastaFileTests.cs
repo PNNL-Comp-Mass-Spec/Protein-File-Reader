@@ -104,6 +104,65 @@ namespace ProteinReader_UnitTests
         }
 
         [Test]
+        [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta")]
+        [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta.gz")]
+        [TestCase(@"Test_Data\JunkTest.fasta")]
+        [TestCase(@"Test_Data\Tryp_Pig_Bov.fasta")]
+        [TestCase(@"Test_Data\H_sapiens_Uniprot_SPROT_2017-04-12_excerpt.fasta")]
+        public void TestDiscardProteinResidues(string fastaFile)
+        {
+            var dataFile = FileRefs.GetTestFile(fastaFile);
+
+            var proteinsRead = 0;
+            using (var reader = new ProteinFileReader.FastaFileReader(dataFile.FullName))
+            {
+                reader.DiscardProteinResidues = true;
+
+                while (reader.ReadNextProteinEntry())
+                {
+                    proteinsRead++;
+                    Assert.IsEmpty(reader.ProteinSequence, "Protein sequence is not empty for {0}", reader.ProteinName);
+                }
+            }
+
+            Console.WriteLine("Read {0} proteins from {1}", proteinsRead, dataFile.FullName);
+        }
+
+        [Test]
+        [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta", 750)]
+        [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta.gz", 750)]
+        public void TestDiscardProteinResiduesPerformance(string fastaFile, int iterations)
+        {
+            var dataFile = FileRefs.GetTestFile(fastaFile);
+
+            for (var x = 0; x < 2; x++)
+            {
+                var discardProteinResidues = x != 0;
+
+                var startTime = DateTime.UtcNow;
+                var proteinsRead = 0;
+
+                for (var i = 0; i < iterations; i++)
+                {
+                    using (var reader = new ProteinFileReader.FastaFileReader(dataFile.FullName))
+                    {
+                        reader.DiscardProteinResidues = discardProteinResidues;
+
+                        while (reader.ReadNextProteinEntry())
+                        {
+                            proteinsRead++;
+                        }
+                    }
+                }
+
+                var endTime = DateTime.UtcNow;
+
+                Console.WriteLine("Elapsed time for {0} iterations with DiscardProteinResidues={1,-5} is {2:F1} seconds; {3:N0} total proteins read",
+                    iterations, discardProteinResidues, endTime.Subtract(startTime).TotalSeconds, proteinsRead);
+            }
+        }
+
+        [Test]
         [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta", 250, 5.75)]
         [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta.gz", 250, 5.58)]
         [TestCase(@"Test_Data\Tryp_Pig_Bov.fasta", 5, 30.23)]
