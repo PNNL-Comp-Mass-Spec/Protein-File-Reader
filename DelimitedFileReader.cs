@@ -243,12 +243,20 @@ namespace ProteinFileReader
                 while (!entryFound && !mProteinFileInputStream.EndOfStream)
                 {
                     var lineIn = mProteinFileInputStream.ReadLine();
+                    mFileLinesRead++;
 
-                    if (string.IsNullOrWhiteSpace(lineIn))
+                    if (lineIn == null)
+                    {
+                        mFileBytesRead += 2;
                         continue;
+                    }
 
                     mFileBytesRead += lineIn.Length + 2;
-                    mFileLinesRead++;
+
+                    if (string.IsNullOrWhiteSpace(lineIn))
+                    {
+                        continue;
+                    }
 
                     var dataLine = lineIn.TrimEnd();
                     var splitLine = dataLine.Split(sepChars, MAX_SPLIT_LINE_COUNT).ToList();

@@ -240,10 +240,15 @@ namespace ProteinFileReader
                     else
                     {
                         lineIn = mProteinFileInputStream.ReadLine();
-                        if (!string.IsNullOrWhiteSpace(lineIn))
+                        mFileLinesRead++;
+
+                        if (lineIn == null)
+                        {
+                            mFileBytesRead += 2;
+                        }
+                        else
                         {
                             mFileBytesRead += lineIn.Length + 2;
-                            mFileLinesRead++;
                         }
                     }
 
@@ -269,13 +274,15 @@ namespace ProteinFileReader
                     while (!mProteinFileInputStream.EndOfStream)
                     {
                         var lineIn2 = mProteinFileInputStream.ReadLine();
-
-                        if (string.IsNullOrWhiteSpace(lineIn2))
-                            continue;
-
-                        mFileBytesRead += lineIn2.Length + 2;
                         mFileLinesRead++;
 
+                        if (lineIn2 == null)
+                        {
+                            mFileBytesRead += 2;
+                            continue;
+                        }
+
+                        mFileBytesRead += lineIn2.Length + 2;
                         var dataLine2 = lineIn2.Trim();
 
                         if (dataLine2.StartsWith(mProteinLineStartChar.ToString()))
