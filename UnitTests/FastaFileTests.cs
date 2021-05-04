@@ -114,15 +114,15 @@ namespace ProteinReader_UnitTests
             var dataFile = FileRefs.GetTestFile(fastaFile);
 
             var proteinsRead = 0;
-            using (var reader = new ProteinFileReader.FastaFileReader(dataFile.FullName))
+            using var reader = new ProteinFileReader.FastaFileReader(dataFile.FullName)
             {
-                reader.DiscardProteinResidues = true;
+                DiscardProteinResidues = true
+            };
 
-                while (reader.ReadNextProteinEntry())
-                {
-                    proteinsRead++;
-                    Assert.IsEmpty(reader.ProteinSequence, "Protein sequence is not empty for {0}", reader.ProteinName);
-                }
+            while (reader.ReadNextProteinEntry())
+            {
+                proteinsRead++;
+                Assert.IsEmpty(reader.ProteinSequence, "Protein sequence is not empty for {0}", reader.ProteinName);
             }
 
             Console.WriteLine("Read {0} proteins from {1}", proteinsRead, dataFile.FullName);
@@ -144,14 +144,14 @@ namespace ProteinReader_UnitTests
 
                 for (var i = 0; i < iterations; i++)
                 {
-                    using (var reader = new ProteinFileReader.FastaFileReader(dataFile.FullName))
+                    using var reader = new ProteinFileReader.FastaFileReader(dataFile.FullName)
                     {
-                        reader.DiscardProteinResidues = discardProteinResidues;
+                        DiscardProteinResidues = discardProteinResidues
+                    };
 
-                        while (reader.ReadNextProteinEntry())
-                        {
-                            proteinsRead++;
-                        }
+                    while (reader.ReadNextProteinEntry())
+                    {
+                        proteinsRead++;
                     }
                 }
 
