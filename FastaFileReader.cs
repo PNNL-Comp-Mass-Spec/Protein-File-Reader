@@ -60,13 +60,6 @@ namespace ProteinFileReader
 
         #region "Class wide Variables"
 
-
-        /// <summary>
-        /// Character that denotes the end of the protein name
-        /// </summary>
-        /// <remarks>Typically a space</remarks>
-        private char mProteinLineAccessionEndChar;
-
         /// <summary>
         /// Residues for the current entry
         /// </summary>
@@ -91,19 +84,10 @@ namespace ProteinFileReader
         public char ProteinLineStartChar { get; } = PROTEIN_LINE_START_CHAR;
 
         /// <summary>
-        /// The character that follows the protein name; always a space
+        /// The character that follows the protein name
         /// </summary>
-        public char ProteinLineAccessionEndChar
-        {
-            get => mProteinLineAccessionEndChar;
-            set
-            {
-                if (value != 0)
-                {
-                    mProteinLineAccessionEndChar = value;
-                }
-            }
-        }
+        /// <remarks>Should be a space, but will also match a non-breaking space (Ux00A0)</remarks>
+        public char[] ProteinLineAccessionEndChars { get; } = { PROTEIN_LINE_ACCESSION_TERMINATOR, '\x00A0' };
 
         #endregion
 
@@ -119,7 +103,7 @@ namespace ProteinFileReader
                     headerLine = headerLine.TrimStart(ProteinLineStartChar).Trim();
                 }
 
-                var charIndex = headerLine.IndexOf(mProteinLineAccessionEndChar);
+                var charIndex = headerLine.IndexOfAny(ProteinLineAccessionEndChars);
                 if (charIndex > 0)
                 {
                     description = headerLine.Substring(charIndex + 1).Trim();
@@ -153,7 +137,7 @@ namespace ProteinFileReader
                     headerLine = headerLine.TrimStart(ProteinLineStartChar).Trim();
                 }
 
-                var charIndex = headerLine.IndexOf(mProteinLineAccessionEndChar);
+                var charIndex = headerLine.IndexOfAny(ProteinLineAccessionEndChars);
                 if (charIndex > 0)
                 {
                     return headerLine.Substring(0, charIndex).Trim();
@@ -191,7 +175,6 @@ namespace ProteinFileReader
 
         private void InitializeLocalVariables()
         {
-            mProteinLineAccessionEndChar = PROTEIN_LINE_ACCESSION_TERMINATOR;
 
             mCachedHeaderLine = string.Empty;
         }
