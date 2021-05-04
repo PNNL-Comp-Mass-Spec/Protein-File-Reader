@@ -30,7 +30,6 @@ namespace ProteinFileReader
         public FastaFileReader()
         {
             mProteinResidues = new StringBuilder();
-            InitializeLocalVariables();
         }
 
         /// <summary>
@@ -40,7 +39,6 @@ namespace ProteinFileReader
         public FastaFileReader(string fastaFilePath)
         {
             mProteinResidues = new StringBuilder();
-            InitializeLocalVariables();
             OpenFile(fastaFilePath);
         }
 
@@ -66,7 +64,7 @@ namespace ProteinFileReader
         /// <remarks>Copied to mCurrentEntry.Sequence once all residues have been read</remarks>
         private readonly StringBuilder mProteinResidues;
 
-        private string mCachedHeaderLine;
+        private string mCachedHeaderLine = string.Empty;
 
         #endregion
 
@@ -171,12 +169,6 @@ namespace ProteinFileReader
             {
                 return mCurrentEntry.HeaderLine;
             }
-        }
-
-        private void InitializeLocalVariables()
-        {
-
-            mCachedHeaderLine = string.Empty;
         }
 
         /// <summary>
