@@ -60,11 +60,6 @@ namespace ProteinFileReader
 
         #region "Class wide Variables"
 
-        /// <summary>
-        /// Character that indicates the start of a data line with protein name (accession) and optionally description
-        /// </summary>
-        /// <remarks>Typically a '>'</remarks>
-        private char mProteinLineStartChar;
 
         /// <summary>
         /// Character that denotes the end of the protein name
@@ -90,19 +85,10 @@ namespace ProteinFileReader
         public override string HeaderLine => GetHeaderLine(false);
 
         /// <summary>
-        /// Character that precedes each header line (the line with the protein name and description)
+        /// Character that indicates the start of a data line with protein name (accession) and optionally description
         /// </summary>
-        public char ProteinLineStartChar
-        {
-            get => mProteinLineStartChar;
-            set
-            {
-                if (value != 0)
-                {
-                    mProteinLineStartChar = value;
-                }
-            }
-        }
+        /// <remarks>Should be a '>'</remarks>
+        public char ProteinLineStartChar { get; } = PROTEIN_LINE_START_CHAR;
 
         /// <summary>
         /// The character that follows the protein name; always a space
@@ -127,10 +113,10 @@ namespace ProteinFileReader
 
             try
             {
-                if (headerLine.StartsWith(mProteinLineStartChar.ToString()))
+                if (headerLine.StartsWith(ProteinLineStartChar.ToString()))
                 {
                     // Remove the > character from the start of the line
-                    headerLine = headerLine.TrimStart(mProteinLineStartChar).Trim();
+                    headerLine = headerLine.TrimStart(ProteinLineStartChar).Trim();
                 }
 
                 var charIndex = headerLine.IndexOf(mProteinLineAccessionEndChar);
@@ -161,10 +147,10 @@ namespace ProteinFileReader
         {
             try
             {
-                if (headerLine.StartsWith(mProteinLineStartChar.ToString()))
+                if (headerLine.StartsWith(ProteinLineStartChar.ToString()))
                 {
                     // Remove the > character from the start of the line
-                    headerLine = headerLine.TrimStart(mProteinLineStartChar).Trim();
+                    headerLine = headerLine.TrimStart(ProteinLineStartChar).Trim();
                 }
 
                 var charIndex = headerLine.IndexOf(mProteinLineAccessionEndChar);
@@ -190,10 +176,10 @@ namespace ProteinFileReader
         {
             try
             {
-                if (!includeStartChar && mCurrentEntry.HeaderLine.StartsWith(mProteinLineStartChar.ToString()))
+                if (!includeStartChar && mCurrentEntry.HeaderLine.StartsWith(ProteinLineStartChar.ToString()))
                 {
                     // Remove the > character from the start of the line
-                    return mCurrentEntry.HeaderLine.TrimStart(mProteinLineStartChar).Trim();
+                    return mCurrentEntry.HeaderLine.TrimStart(ProteinLineStartChar).Trim();
                 }
                 return mCurrentEntry.HeaderLine;
             }
@@ -205,7 +191,6 @@ namespace ProteinFileReader
 
         private void InitializeLocalVariables()
         {
-            mProteinLineStartChar = PROTEIN_LINE_START_CHAR;
             mProteinLineAccessionEndChar = PROTEIN_LINE_ACCESSION_TERMINATOR;
 
             mCachedHeaderLine = string.Empty;
@@ -229,7 +214,7 @@ namespace ProteinFileReader
 
             try
             {
-                var proteinLineStartChar = mProteinLineStartChar.ToString();
+                var proteinLineStartChar = ProteinLineStartChar.ToString();
 
                 while (!proteinEntryFound && !mProteinFileInputStream.EndOfStream)
                 {
@@ -260,7 +245,7 @@ namespace ProteinFileReader
                     var dataLine = lineIn.Trim();
 
                     // See if lineIn starts with the protein header start character
-                    if (!dataLine.StartsWith(mProteinLineStartChar.ToString()))
+                    if (!dataLine.StartsWith(ProteinLineStartChar.ToString()))
                         continue;
 
                     mCurrentEntry.HeaderLine = dataLine;
