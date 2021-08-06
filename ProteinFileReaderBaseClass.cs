@@ -1,4 +1,4 @@
-﻿// This class can be used to open a Fasta file or delimited text file
+﻿// This class can be used to open a FASTA file or delimited text file
 //  with protein names and sequences and return each protein present
 //
 // -------------------------------------------------------------------------------
@@ -36,7 +36,9 @@ namespace ProteinFileReader
         /// When true, only read protein names and descriptions
         /// Ignore protein residues
         /// </summary>
-        /// <remarks>This will result in a slightly faster parsing of the input file</remarks>
+        /// <remarks>
+        /// This will result in a slightly faster parsing of the input file
+        /// </remarks>
         public bool DiscardProteinResidues { get; set; }
 
         /// <summary>
@@ -93,7 +95,9 @@ namespace ProteinFileReader
         /// <summary>
         /// Unique entry ID
         /// </summary>
-        /// <remarks>Only used for delimited text files of peptides, with a DelimitedFileFormatCode format that has a UniqueID column</remarks>
+        /// <remarks>
+        /// Only used for delimited text files of peptides, with a DelimitedFileFormatCode format that has a UniqueID column
+        /// </remarks>
         public int EntryUniqueID => mCurrentEntry.UniqueID;
 
         /// <summary>
@@ -144,7 +148,9 @@ namespace ProteinFileReader
         /// <summary>
         /// Protein Name or Protein Name and Description
         /// </summary>
-        /// <remarks>If file format is DelimitedFileFormatCode.SequenceOnly, returns the protein sequence</remarks>
+        /// <remarks>
+        /// If file format is DelimitedFileFormatCode.SequenceOnly, returns the protein sequence
+        /// </remarks>
         public virtual string HeaderLine => mCurrentEntry.HeaderLine;
 
         #endregion

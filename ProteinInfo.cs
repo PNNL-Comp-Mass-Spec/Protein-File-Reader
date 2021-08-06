@@ -8,7 +8,7 @@ namespace ProteinFileReader
     public class ProteinInfo
     {
         /// <summary>
-        /// For Fasta files, the header line, including the protein header start character; for Delimited files, the entire line
+        /// For FASTA files, the header line, including the protein header start character; for Delimited files, the entire line
         /// </summary>
         public string HeaderLine { get; set; }
 

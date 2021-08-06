@@ -1,4 +1,4 @@
-The ProteinFileReader DLL can be used to open a Fasta file or delimited text file
+The ProteinFileReader DLL can be used to open a FASTA file or delimited text file
 with protein names and sequences and return each protein present. 
 * It can read both plain text files and gzipped files, for example E_coli_K12_UniProt.fasta.gz
 

@@ -112,7 +112,9 @@ namespace ProteinFileReader
         /// <summary>
         /// Delimiter between columns
         /// </summary>
-        /// <remarks>Default is tab</remarks>
+        /// <remarks>
+        /// Default is tab
+        /// </remarks>
         public char Delimiter
         {
             get => mDelimiter;
@@ -133,7 +135,9 @@ namespace ProteinFileReader
         /// <summary>
         /// Protein Name or Protein Name and Description
         /// </summary>
-        /// <remarks>If file format is DelimitedFileFormatCode.SequenceOnly, returns the protein sequence</remarks>
+        /// <remarks>
+        /// If file format is DelimitedFileFormatCode.SequenceOnly, returns the protein sequence
+        /// </remarks>
         public override string HeaderLine
         {
             get
@@ -204,8 +208,10 @@ namespace ProteinFileReader
         /// <summary>
         /// Reads the next entry in delimited protein (or delimited peptide) file
         /// </summary>
+        /// <remarks>
+        /// This function will update variable mFileLineSkipCount if any lines are skipped due to having an invalid format
+        /// </remarks>
         /// <returns>True if an entry is found, otherwise false</returns>
-        /// <remarks>This function will update variable mFileLineSkipCount if any lines are skipped due to having an invalid format</remarks>
         public override bool ReadNextProteinEntry()
         {
             const int MAX_SPLIT_LINE_COUNT = 8;
