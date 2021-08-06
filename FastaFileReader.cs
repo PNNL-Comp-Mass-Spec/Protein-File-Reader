@@ -88,8 +88,10 @@ namespace ProteinFileReader
         /// <summary>
         /// The character that follows the protein name
         /// </summary>
-        /// <remarks>Should be a space, but will also match a non-breaking space (Ux00A0)</remarks>
-        public char[] ProteinLineAccessionEndChars { get; } = { PROTEIN_LINE_ACCESSION_TERMINATOR, '\x00A0' };
+        /// <remarks>
+        /// Should be a space, but will also match a non-breaking space (Ux00A0) and a tab
+        /// </remarks>
+        public char[] ProteinLineAccessionEndChars { get; } = { PROTEIN_LINE_ACCESSION_TERMINATOR, '\x00A0', '\t' };
 
         #endregion
 
