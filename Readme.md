@@ -9,7 +9,7 @@ ProteinFileReader.Dll is available on NuGet at:
 
 ### Continuous Integration
 
-The latest versions of the DLL is available on the [AppVeyor CI server](https://ci.appveyor.com/project/PNNLCompMassSpec/protein-file-reader/build/artifacts)
+The latest versions of the DLL is available for six months on the [AppVeyor CI server](https://ci.appveyor.com/project/PNNLCompMassSpec/protein-file-reader/build/artifacts)
 
 [![Build status](https://ci.appveyor.com/api/projects/status/er5vw1k8bgefrynk?svg=true)](https://ci.appveyor.com/project/PNNLCompMassSpec/protein-file-reader)
 
@@ -22,7 +22,7 @@ Source code is available on GitHub at:
 
 Written by Matthew Monroe for the Department of Energy (PNNL, Richland, WA) \
 E-mail: matthew.monroe@pnnl.gov or proteomics@pnnl.gov \
-Website: https://omics.pnl.gov or https://github.com/pnnl-comp-mass-spec
+Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://panomics.pnnl.gov/ or https://www.pnnl.gov/integrative-omics
 
 ## License
 

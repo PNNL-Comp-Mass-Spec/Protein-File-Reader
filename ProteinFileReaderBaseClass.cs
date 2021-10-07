@@ -6,7 +6,7 @@
 // Program started in October 2004
 //
 // E-mail: matthew.monroe@pnl.gov or proteomics@pnl.gov
-// Website: https://panomics.pnl.gov/ or https://omics.pnl.gov
+// Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://panomics.pnnl.gov/ or https://www.pnnl.gov/integrative-omics
 // -------------------------------------------------------------------------------
 //
 // Licensed under the Apache License, Version 2.0; you may not use this file except
