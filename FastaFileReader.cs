@@ -47,12 +47,12 @@ namespace ProteinFileReader
         /// <summary>
         /// Each protein description line in the FASTA file should start with a > symbol
         /// </summary>
-        private const char PROTEIN_LINE_START_CHAR = '>';
+        public const char PROTEIN_LINE_START_CHAR = '>';
 
         /// <summary>
         /// Character that denotes the end of the protein name
         /// </summary>
-        private const char PROTEIN_LINE_ACCESSION_TERMINATOR = ' ';
+        public const char PROTEIN_LINE_ACCESSION_TERMINATOR = ' ';
 
         #endregion
 
