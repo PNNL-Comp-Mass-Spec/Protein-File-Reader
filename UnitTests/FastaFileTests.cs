@@ -130,8 +130,8 @@ namespace ProteinReader_UnitTests
         }
 
         [Test]
-        [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta", 750)]
-        [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta.gz", 750)]
+        [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta", 400)]
+        [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta.gz", 400)]
         public void TestDiscardProteinResiduesPerformance(string fastaFile, int iterations)
         {
             var dataFile = FileRefs.GetTestFile(fastaFile);
