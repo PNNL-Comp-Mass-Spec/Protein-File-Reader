@@ -44,24 +44,7 @@ namespace ProteinFileReader
         public DelimitedProteinFileReader(string inputFilePath, ProteinFileFormatCode fileFormat = ProteinFileFormatCode.ProteinName_Description_Sequence)
         {
             InitializeLocalVariables(fileFormat);
-            var fileOpened = OpenFile(inputFilePath);
-            if (!fileOpened)
-                return;
-
-            if (Path.GetExtension(inputFilePath).EndsWith(".csv", StringComparison.OrdinalIgnoreCase) && mDelimiter != ',')
-            {
-                Console.WriteLine();
-                Console.WriteLine("Note: auto-changing the delimiter to a comma since the input file's extension is .csv");
-                Console.WriteLine();
-                mDelimiter = ',';
-            }
-
-            var configuration = new CsvHelper.Configuration.CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                Delimiter = mDelimiter.ToString()
-            };
-
-            mCsvReader = new CsvHelper.CsvReader(mProteinFileInputStream, configuration);
+            OpenFile(inputFilePath);
         }
 
         #region "Constants and Enums"
@@ -249,7 +232,26 @@ namespace ProteinFileReader
             mFirstLineSkipped = false;
 
             // Call OpenFile in the base class
-            return base.OpenFile(inputFilePath);
+            var fileOpened = base.OpenFile(inputFilePath);
+            if (!fileOpened)
+                return false;
+
+            if (Path.GetExtension(inputFilePath).EndsWith(".csv", StringComparison.OrdinalIgnoreCase) && mDelimiter != ',')
+            {
+                Console.WriteLine();
+                Console.WriteLine("Note: auto-changing the delimiter to a comma since the input file's extension is .csv");
+                Console.WriteLine();
+                mDelimiter = ',';
+            }
+
+            var configuration = new CsvHelper.Configuration.CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                Delimiter = mDelimiter.ToString()
+            };
+
+            mCsvReader = new CsvHelper.CsvReader(mProteinFileInputStream, configuration);
+
+            return true;
         }
 
         private bool ParseNameDescriptionSequenceLine(
