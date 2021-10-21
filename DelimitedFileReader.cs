@@ -15,6 +15,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 
 // ReSharper disable UnusedMember.Global
@@ -45,6 +47,21 @@ namespace ProteinFileReader
             var fileOpened = OpenFile(inputFilePath);
             if (!fileOpened)
                 return;
+
+            if (Path.GetExtension(inputFilePath).EndsWith(".csv", StringComparison.OrdinalIgnoreCase) && mDelimiter != ',')
+            {
+                Console.WriteLine();
+                Console.WriteLine("Note: auto-changing the delimiter to a comma since the input file's extension is .csv");
+                Console.WriteLine();
+                mDelimiter = ',';
+            }
+
+            var configuration = new CsvHelper.Configuration.CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                Delimiter = mDelimiter.ToString()
+            };
+
+            mCsvReader = new CsvHelper.CsvReader(mProteinFileInputStream, configuration);
         }
 
         #region "Constants and Enums"
@@ -104,7 +121,10 @@ namespace ProteinFileReader
 
         #region "Class wide Variables"
 
+        private CsvHelper.CsvReader mCsvReader;
+
         private char mDelimiter;
+
         private bool mFirstLineSkipped;
 
         #endregion
@@ -115,7 +135,7 @@ namespace ProteinFileReader
         /// Delimiter between columns
         /// </summary>
         /// <remarks>
-        /// Default is tab
+        /// Default is a tab character
         /// </remarks>
         public char Delimiter
         {
@@ -186,11 +206,22 @@ namespace ProteinFileReader
         }
 
         /// <summary>
-        /// Controls whether to skip the first line
+        /// Controls whether to skip the first line (since it is a header line)
         /// </summary>
         public bool SkipFirstLine { get; set; }
 
         #endregion
+
+        /// <summary>
+        /// Close the data file
+        /// </summary>
+        public override bool CloseFile()
+        {
+            mCsvReader?.Dispose();
+
+            // Call CloseFile in the base class
+            return base.CloseFile();
+        }
 
         private void InitializeLocalVariables(ProteinFileFormatCode fileFormat)
         {
@@ -251,9 +282,6 @@ namespace ProteinFileReader
         /// <returns>True if an entry is found, otherwise false</returns>
         public override bool ReadNextProteinEntry()
         {
-            const int MAX_SPLIT_LINE_COUNT = 8;
-            char[] sepChars = { mDelimiter };
-
             var entryFound = false;
 
             mFileLineSkipCount = 0;
@@ -270,92 +298,103 @@ namespace ProteinFileReader
                 {
                     mFirstLineSkipped = true;
 
-                    if (!mProteinFileInputStream.EndOfStream)
-                    {
-                        var headerLine = mProteinFileInputStream.ReadLine();
+                    mCsvReader.Read();
+                    mCsvReader.ReadHeader();
 
-                        if (!string.IsNullOrWhiteSpace(headerLine))
-                        {
-                            mFileBytesRead += headerLine.Length + 2;
-                            mFileLinesRead++;
-                        }
+                    var headerLine = string.Join(mDelimiter.ToString(), mCsvReader.Parser.Context.Reader.HeaderRecord);
+
+                    if (!string.IsNullOrWhiteSpace(headerLine))
+                    {
+                        mFileBytesRead += headerLine.Length + 2;
+                        mFileLinesRead++;
                     }
                 }
 
                 // Read the file until the next valid line is found
-                while (!entryFound && !mProteinFileInputStream.EndOfStream)
+                while (!entryFound && mCsvReader.Read())
                 {
-                    var lineIn = mProteinFileInputStream.ReadLine();
                     mFileLinesRead++;
 
-                    if (lineIn == null)
+                    var rowData = new List<string>();
+
+                    for (var columnIndex = 0; columnIndex < mCsvReader.Parser.Count; columnIndex++)
+                    {
+                        if (!mCsvReader.TryGetField<string>(columnIndex, out var fieldValue))
+                        {
+                            break;
+                        }
+
+                        rowData.Add(fieldValue);
+                    }
+
+                    if (rowData.Count == 0)
                     {
                         mFileBytesRead += 2;
                         continue;
                     }
 
-                    mFileBytesRead += lineIn.Length + 2;
+                    var dataLine = string.Join(mDelimiter.ToString(), rowData);
+                    mFileBytesRead += dataLine.Length + 2;
 
-                    if (string.IsNullOrWhiteSpace(lineIn))
+                    var validRow = rowData.Any(item => !string.IsNullOrWhiteSpace(item));
+
+                    if (!validRow)
                     {
                         continue;
                     }
-
-                    var dataLine = lineIn.TrimEnd();
-                    var splitLine = dataLine.Split(sepChars, MAX_SPLIT_LINE_COUNT).ToList();
 
                     mCurrentEntry.Clear();
 
                     switch (DelimitedFileFormatCode)
                     {
                         case ProteinFileFormatCode.SequenceOnly:
-                            if (splitLine.Count >= 1)
+                            if (rowData.Count >= 1)
                             {
-                                entryFound = ParseNameDescriptionSequenceLine(dataLine, splitLine, -1, -1, 0);
+                                entryFound = ParseNameDescriptionSequenceLine(dataLine, rowData, -1, -1, 0);
                             }
                             break;
 
                         case ProteinFileFormatCode.ProteinName_Sequence:
-                            if (splitLine.Count >= 2)
+                            if (rowData.Count >= 2)
                             {
-                                entryFound = ParseNameDescriptionSequenceLine(dataLine, splitLine, 0, -1, 1);
+                                entryFound = ParseNameDescriptionSequenceLine(dataLine, rowData, 0, -1, 1);
                             }
                             break;
 
                         case ProteinFileFormatCode.ProteinName_Description_Sequence:
-                            if (splitLine.Count >= 3)
+                            if (rowData.Count >= 3)
                             {
-                                entryFound = ParseNameDescriptionSequenceLine(dataLine, splitLine, 0, 1, 2);
+                                entryFound = ParseNameDescriptionSequenceLine(dataLine, rowData, 0, 1, 2);
                             }
                             break;
 
                         case ProteinFileFormatCode.ProteinName_Description_Hash_Sequence:
-                            if (splitLine.Count >= 4)
+                            if (rowData.Count >= 4)
                             {
-                                entryFound = ParseNameDescriptionSequenceLine(dataLine, splitLine, 0, 1, 3);
+                                entryFound = ParseNameDescriptionSequenceLine(dataLine, rowData, 0, 1, 3);
                             }
                             break;
 
                         case ProteinFileFormatCode.UniqueID_Sequence:
                         case ProteinFileFormatCode.UniqueID_Sequence_Mass_NET:
-                            if (splitLine.Count >= 2)
+                            if (rowData.Count >= 2)
                             {
                                 // Only process the line if the first column is numeric (useful for skipping header lines)
                                 // Also require that the sequence column is not a number
-                                if (IsNumber(splitLine[0]) && !IsNumber(splitLine[1]))
+                                if (IsNumber(rowData[0]) && !IsNumber(rowData[1]))
                                 {
-                                    entryFound = ParseNameDescriptionSequenceLine(dataLine, splitLine, -1, -1, 1);
+                                    entryFound = ParseNameDescriptionSequenceLine(dataLine, rowData, -1, -1, 1);
                                     if (!entryFound)
                                         break;
 
-                                    mCurrentEntry.UniqueID = int.TryParse(splitLine[0], out var id) ? id : 0;
+                                    mCurrentEntry.UniqueID = int.TryParse(rowData[0], out var id) ? id : 0;
 
-                                    if (splitLine.Count >= 4)
+                                    if (rowData.Count >= 4)
                                     {
-                                        if (double.TryParse(splitLine[2], out var mass))
+                                        if (double.TryParse(rowData[2], out var mass))
                                             mCurrentEntry.Mass = mass;
 
-                                        if (float.TryParse(splitLine[3], out var normalizedElutionTime))
+                                        if (float.TryParse(rowData[3], out var normalizedElutionTime))
                                             mCurrentEntry.NET = normalizedElutionTime;
                                     }
                                 }
@@ -365,32 +404,32 @@ namespace ProteinFileReader
                         case ProteinFileFormatCode.ProteinName_PeptideSequence_UniqueID:
                         case ProteinFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET:
                         case ProteinFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET_NETStDev_DiscriminantScore:
-                            if (splitLine.Count >= 3)
+                            if (rowData.Count >= 3)
                             {
                                 // Only process the line if the third column is numeric (useful for skipping header lines)
                                 // Also require that the sequence column is not a number
-                                if (IsNumber(splitLine[2]) && !IsNumber(splitLine[1]))
+                                if (IsNumber(rowData[2]) && !IsNumber(rowData[1]))
                                 {
-                                    entryFound = ParseNameDescriptionSequenceLine(dataLine, splitLine, 0, -1, 1);
+                                    entryFound = ParseNameDescriptionSequenceLine(dataLine, rowData, 0, -1, 1);
                                     if (!entryFound)
                                         break;
 
-                                    mCurrentEntry.UniqueID = int.TryParse(splitLine[2], out var id) ? id : 0;
+                                    mCurrentEntry.UniqueID = int.TryParse(rowData[2], out var id) ? id : 0;
 
-                                    if (splitLine.Count >= 5)
+                                    if (rowData.Count >= 5)
                                     {
-                                        if (double.TryParse(splitLine[3], out var mass))
+                                        if (double.TryParse(rowData[3], out var mass))
                                             mCurrentEntry.Mass = mass;
 
-                                        if (float.TryParse(splitLine[4], out var normalizedElutionTime))
+                                        if (float.TryParse(rowData[4], out var normalizedElutionTime))
                                             mCurrentEntry.NET = normalizedElutionTime;
 
-                                        if (splitLine.Count >= 7)
+                                        if (rowData.Count >= 7)
                                         {
-                                            if (float.TryParse(splitLine[5], out var netStDev))
+                                            if (float.TryParse(rowData[5], out var netStDev))
                                                 mCurrentEntry.NETStDev = netStDev;
 
-                                            if (float.TryParse(splitLine[6], out var discriminantScore))
+                                            if (float.TryParse(rowData[6], out var discriminantScore))
                                                 mCurrentEntry.DiscriminantScore = discriminantScore;
                                         }
                                     }

@@ -174,7 +174,7 @@ namespace ProteinFileReader
         /// <summary>
         /// Close the data file
         /// </summary>
-        public bool CloseFile()
+        public virtual bool CloseFile()
         {
             try
             {
