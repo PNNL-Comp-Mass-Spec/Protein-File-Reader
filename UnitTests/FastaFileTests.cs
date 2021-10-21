@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using ProteinFileReader;
 
 namespace ProteinReader_UnitTests
 {
@@ -25,7 +26,7 @@ namespace ProteinReader_UnitTests
         {
             var dataFile = FileRefs.GetTestFile(fastaFile);
 
-            var reader = new ProteinFileReader.FastaFileReader(dataFile.FullName);
+            var reader = new FastaFileReader(dataFile.FullName);
 
             ValidationLogic.CheckProteinStats(reader, proteinCountExpected, totalResidueCountExpected);
         }
@@ -49,7 +50,7 @@ namespace ProteinReader_UnitTests
         {
             var dataFile = FileRefs.GetTestFile(fastaFile);
 
-            var reader = new ProteinFileReader.FastaFileReader(dataFile.FullName);
+            var reader = new FastaFileReader(dataFile.FullName);
 
             ValidationLogic.CheckProteinNamesOrSequences(reader, expectedFirstProteinNames, expectedLastProteinNames, true);
         }
@@ -73,7 +74,7 @@ namespace ProteinReader_UnitTests
         {
             var dataFile = FileRefs.GetTestFile(fastaFile);
 
-            var reader = new ProteinFileReader.FastaFileReader();
+            var reader = new FastaFileReader();
             reader.OpenFile(dataFile.FullName);
 
             ValidationLogic.CheckProteinNamesOrSequences(reader, expectedFirstProteinNames, expectedLastProteinNames, true);
@@ -98,7 +99,7 @@ namespace ProteinReader_UnitTests
         {
             var dataFile = FileRefs.GetTestFile(fastaFile);
 
-            var reader = new ProteinFileReader.FastaFileReader(dataFile.FullName);
+            var reader = new FastaFileReader(dataFile.FullName);
 
             ValidationLogic.CheckProteinDescription(reader, proteinNames, proteinDescriptions, delimiter);
         }
@@ -114,7 +115,7 @@ namespace ProteinReader_UnitTests
             var dataFile = FileRefs.GetTestFile(fastaFile);
 
             var proteinsRead = 0;
-            using var reader = new ProteinFileReader.FastaFileReader(dataFile.FullName)
+            using var reader = new FastaFileReader(dataFile.FullName)
             {
                 DiscardProteinResidues = true
             };
@@ -144,7 +145,7 @@ namespace ProteinReader_UnitTests
 
                 for (var i = 0; i < iterations; i++)
                 {
-                    using var reader = new ProteinFileReader.FastaFileReader(dataFile.FullName)
+                    using var reader = new FastaFileReader(dataFile.FullName)
                     {
                         DiscardProteinResidues = discardProteinResidues
                     };
