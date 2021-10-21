@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.IO;
+using NUnit.Framework;
 using ProteinFileReader;
 
 namespace ProteinReader_UnitTests
@@ -136,5 +138,37 @@ namespace ProteinReader_UnitTests
 
             ValidationLogic.CheckProteinStats(reader, proteinCountExpected, totalResidueCountExpected);
         }
+
+        [Test]
+        [TestCase(@"Test_Data\JunkTest.txt", 26, 7427, true)]
+        [TestCase(@"Test_Data\NonExistentFile.txt", 0, 0, false)]
+        [TestCase(@"Test_Data\Tryp_Pig_Bov.txt", 16, 4766, true)]
+        [TestCase(@"Test_Data\H_sapiens_Uniprot_SPROT_2017-04-12_excerpt.txt", 15, 41451, true)]
+        public void TestOpenFileParameterlessConstructor(string proteinsFile, int proteinCountExpected, int totalResidueCountExpected, bool fileShouldExist)
+        {
+            var dataFile = fileShouldExist
+                ? FileRefs.GetTestFile(proteinsFile)
+                : new FileInfo(proteinsFile);
+
+            var reader = new DelimitedProteinFileReader
+            {
+                SkipFirstLine = true
+            };
+
+            var fileOpened = reader.OpenFile(dataFile.FullName);
+            if (!fileOpened)
+            {
+                if (!fileShouldExist)
+                {
+                    Console.WriteLine("reader.OpenFile returned false, which is to be expected for a non existent file");
+                    return;
+                }
+
+                Assert.Fail("Input file not found: " + dataFile.FullName);
+            }
+
+            ValidationLogic.CheckProteinStats(reader, proteinCountExpected, totalResidueCountExpected);
+        }
+
     }
 }
