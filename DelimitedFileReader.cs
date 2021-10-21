@@ -288,7 +288,7 @@ namespace ProteinFileReader
 
             mFileLineSkipCount = 0;
 
-            if (mProteinFileInputStream == null)
+            if (mProteinFileInputStream == null || mCsvReader == null)
             {
                 mCurrentEntry.Clear();
                 return false;
