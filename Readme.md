@@ -1,11 +1,14 @@
 The ProteinFileReader DLL can be used to open a FASTA file or delimited text file
 with protein names and sequences and return each protein present. 
 * It can read both plain text files and gzipped files, for example E_coli_K12_UniProt.fasta.gz
+* Supports both tab-delimited and comma separated value files, including .csv files with double quoted strings with internal commas
 
 ### NuGet
 
 ProteinFileReader.Dll is available on NuGet at:
 * https://www.nuget.org/packages/ProteinFileReader/
+
+The reader depends on NuGet package [CsvHelper](https://joshclose.github.io/CsvHelper/)
 
 ### Continuous Integration
 

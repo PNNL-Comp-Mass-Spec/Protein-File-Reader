@@ -1,12 +1,17 @@
 ProteinFileReader.dll Change Log
 
+Version 3.0.0; October 21, 2021
+	- Add a dependency to NuGet package CsvHelper
+	- Use CsvHelper to read delimited text files
+		- Supports comma-separated value (.csv) files that have double quoted strings with internal commas
+
 Version 2.0.7; October 18, 2021
 	- Make constants public
 
 Version 2.0.6; August 6, 2021
 	- Update to .NET 4.7.2
 	- Check for a tab character following a protein name
-	  - The protein name should be followed by a space, but we also support a non-breaking space and a tab character
+		- The protein name should be followed by a space, but we also support a non-breaking space and a tab character
 
 Version 2.0.5; May 4, 2021
 	- Recognize a non-breaking space as a valid protein name / description separator
