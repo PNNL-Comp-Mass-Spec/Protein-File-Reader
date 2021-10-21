@@ -163,6 +163,46 @@ namespace ProteinReader_UnitTests
         }
 
         [Test]
+        [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta," +
+                  @"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta.gz," +
+                  @"Test_Data\JunkTest.fasta," +
+                  @"Test_Data\Tryp_Pig_Bov.fasta," +
+                  @"Test_Data\H_sapiens_Uniprot_SPROT_2017-04-12_excerpt.fasta")]
+        public void TestOpenMultipleFiles(string proteinFiles)
+        {
+            var inputFiles = proteinFiles.Split(',');
+
+            var reader = new FastaFileReader();
+
+            var fileNumber = 0;
+            foreach (var inputFile in inputFiles)
+            {
+                fileNumber++;
+
+                var dataFile = FileRefs.GetTestFile(inputFile);
+
+                Console.WriteLine("Opening file {0}: {1}", fileNumber, dataFile.FullName);
+
+                // Note that OpenFile will call CloseFile before opening the file
+                var fileOpened = reader.OpenFile(dataFile.FullName);
+                if (!fileOpened)
+                {
+                    Assert.Fail("Input file not found: " + dataFile.FullName);
+                }
+
+                ValidationLogic.CheckProteinStats(reader, 0, 0);
+
+                if (fileNumber == 2)
+                {
+                    // Explicitly call CloseFile
+                    reader.CloseFile();
+                }
+
+                Console.WriteLine();
+            }
+        }
+
+        [Test]
         [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta", 250, 5.75)]
         [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta.gz", 250, 5.58)]
         [TestCase(@"Test_Data\Tryp_Pig_Bov.fasta", 5, 30.23)]

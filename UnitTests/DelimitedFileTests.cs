@@ -170,5 +170,46 @@ namespace ProteinReader_UnitTests
             ValidationLogic.CheckProteinStats(reader, proteinCountExpected, totalResidueCountExpected);
         }
 
+        [Test]
+        [TestCase(@"Test_Data\JunkTest.txt," +
+                  @"Test_Data\Tryp_Pig_Bov.txt," +
+                  @"Test_Data\H_sapiens_Uniprot_SPROT_2017-04-12_excerpt.txt," +
+                  @"Test_Data\QC_Standards_2004-01-21.csv")]
+        public void TestOpenMultipleFiles(string proteinFiles)
+        {
+            var inputFiles = proteinFiles.Split(',');
+
+            var reader = new DelimitedProteinFileReader
+            {
+                SkipFirstLine = true
+            };
+
+            var fileNumber = 0;
+            foreach (var inputFile in inputFiles)
+            {
+                fileNumber++;
+
+                var dataFile = FileRefs.GetTestFile(inputFile);
+
+                Console.WriteLine("Opening file {0}: {1}", fileNumber, dataFile.FullName);
+
+                // Note that OpenFile will call CloseFile before opening the file
+                var fileOpened = reader.OpenFile(dataFile.FullName);
+                if (!fileOpened)
+                {
+                    Assert.Fail("Input file not found: " + dataFile.FullName);
+                }
+
+                ValidationLogic.CheckProteinStats(reader, 0, 0);
+
+                if (fileNumber == 2)
+                {
+                    // Explicitly call CloseFile
+                    reader.CloseFile();
+                }
+
+                Console.WriteLine();
+            }
+        }
     }
 }
