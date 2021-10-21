@@ -51,7 +51,7 @@ namespace ProteinReader_UnitTests
 
             var reader = new ProteinFileReader.FastaFileReader(dataFile.FullName);
 
-            ValidationLogic.CheckProteinNamesOrSequences(reader, expectedFirstProteinNames, expectedLastProteinNames);
+            ValidationLogic.CheckProteinNamesOrSequences(reader, expectedFirstProteinNames, expectedLastProteinNames, true);
         }
 
         // ReSharper disable StringLiteralTypo
@@ -76,7 +76,7 @@ namespace ProteinReader_UnitTests
             var reader = new ProteinFileReader.FastaFileReader();
             reader.OpenFile(dataFile.FullName);
 
-            ValidationLogic.CheckProteinNamesOrSequences(reader, expectedFirstProteinNames, expectedLastProteinNames);
+            ValidationLogic.CheckProteinNamesOrSequences(reader, expectedFirstProteinNames, expectedLastProteinNames, true);
         }
 
         // ReSharper disable StringLiteralTypo

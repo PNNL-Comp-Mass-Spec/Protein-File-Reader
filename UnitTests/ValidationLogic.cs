@@ -36,14 +36,16 @@ namespace ProteinReader_UnitTests
         /// <param name="expectedFirstProteinNamesOrSequences">Comma separated list of protein names or sequences that should be at the start of the file</param>
         /// <param name="expectedLastProteinNamesOrSequences">Comma separated list of protein names or sequences that should be at the end of the file</param>
         /// <param name="checkName">When true, checking protein names; when false, checking protein sequences</param>
+        /// <param name="delimiter">Delimiter for expected protein names or sequences</param>
         public static void CheckProteinNamesOrSequences(
             ProteinFileReaderBaseClass reader,
             string expectedFirstProteinNamesOrSequences,
             string expectedLastProteinNamesOrSequences,
-            bool checkName = true)
+            bool checkName,
+            char delimiter = ',')
         {
-            var expectedFirstNamesOrSequences = expectedFirstProteinNamesOrSequences.Split(',').ToList();
-            var expectedLastNamesOrSequences = expectedLastProteinNamesOrSequences.Split(',').ToList();
+            var expectedFirstNamesOrSequences = expectedFirstProteinNamesOrSequences.Split(delimiter).ToList();
+            var expectedLastNamesOrSequences = expectedLastProteinNamesOrSequences.Split(delimiter).ToList();
 
             if (string.IsNullOrWhiteSpace(expectedFirstProteinNamesOrSequences) && string.IsNullOrWhiteSpace(expectedLastProteinNamesOrSequences))
             {
@@ -80,7 +82,7 @@ namespace ProteinReader_UnitTests
                 firstItems.Add(nameOrSequence);
             }
 
-            if (expectedLastNamesOrSequences.Count == 0 && expectedLastNamesOrSequences.Count == 0)
+            if (expectedFirstNamesOrSequences.Count == 0 && expectedLastNamesOrSequences.Count == 0)
             {
                 Console.WriteLine();
                 Console.WriteLine("First {0} proteins", 5);

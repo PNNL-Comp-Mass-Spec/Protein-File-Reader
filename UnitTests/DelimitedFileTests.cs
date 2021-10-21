@@ -5,7 +5,7 @@ namespace ProteinReader_UnitTests
 {
     public class DelimitedProteinFileTests
     {
-        // Ignore Spelling: Promega, neuregulin, isoform
+        // Ignore Spelling: Bradykinin, des, isoform, neuregulin, Promega
 
         [Test]
         [TestCase(@"Test_Data\JunkTest.txt", 26, 7427)]
@@ -36,8 +36,11 @@ namespace ProteinReader_UnitTests
         [TestCase(@"Test_Data\QC_Standards_2004-01-21.txt",
             "K2C1_HUMAN,K22E_HUMAN,K1CI_HUMAN",
             "P010|CYC_BOVIN,P011|MANA_YEAST,P012|PHS2_RABIT")]
+        [TestCase(@"Test_Data\QC_Standards_2004-01-21.csv",
+            "K2C1_HUMAN;K22E_HUMAN;K1CI_HUMAN;KRHU0;TRYP_PIG;001|Brady2-9;002|des-Pro3,Ala2,6-Bradykinin",
+            "P009|OVAL_CHICK;P010|CYC_BOVIN;P011|MANA_YEAST;P012|PHS2_RABIT", ';')]
         // ReSharper restore StringLiteralTypo
-        public void CheckProteinNames(string proteinsFile, string expectedFirstProteinNames, string expectedLastProteinNames)
+        public void CheckProteinNames(string proteinsFile, string expectedFirstProteinNames, string expectedLastProteinNames, char nameDelimiter = ',')
         {
             var dataFile = FileRefs.GetTestFile(proteinsFile);
 
@@ -46,7 +49,7 @@ namespace ProteinReader_UnitTests
                 SkipFirstLine = true
             };
 
-            ValidationLogic.CheckProteinNamesOrSequences(reader, expectedFirstProteinNames, expectedLastProteinNames);
+            ValidationLogic.CheckProteinNamesOrSequences(reader, expectedFirstProteinNames, expectedLastProteinNames, true, nameDelimiter);
         }
 
         // ReSharper disable StringLiteralTypo
@@ -113,6 +116,7 @@ namespace ProteinReader_UnitTests
         [TestCase(@"Test_Data\H_sapiens_Uniprot_SPROT_2017-04-12_excerpt.txt", 15, 41451, DelimitedProteinFileReader.ProteinFileFormatCode.ProteinName_Description_Sequence)]
         [TestCase(@"Test_Data\H_sapiens_Uniprot_SPROT_UniqueIDSequence.txt", 9, 3859, DelimitedProteinFileReader.ProteinFileFormatCode.UniqueID_Sequence)]
         [TestCase(@"Test_Data\H_sapiens_Uniprot_SPROT_NameSequenceID.txt", 14, 7101, DelimitedProteinFileReader.ProteinFileFormatCode.ProteinName_PeptideSequence_UniqueID)]
+        [TestCase(@"Test_Data\H_sapiens_Uniprot_SPROT_NameSequenceID.csv", 14, 7101, DelimitedProteinFileReader.ProteinFileFormatCode.ProteinName_PeptideSequence_UniqueID)]
         [TestCase(@"Test_Data\H_sapiens_Uniprot_SPROT_NameSequenceIDMassNET.txt", 11, 4101, DelimitedProteinFileReader.ProteinFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET)]
         [TestCase(@"Test_Data\H_sapiens_Uniprot_SPROT_NameSequenceIDMassNETPlusStDevAndDiscriminant.txt", 10, 3988, DelimitedProteinFileReader.ProteinFileFormatCode.ProteinName_PeptideSequence_UniqueID_Mass_NET_NETStDev_DiscriminantScore)]
         [TestCase(@"Test_Data\H_sapiens_Uniprot_SPROT_IDSequenceMassNET.txt", 10, 3988, DelimitedProteinFileReader.ProteinFileFormatCode.UniqueID_Sequence_Mass_NET)]
