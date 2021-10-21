@@ -37,12 +37,14 @@ namespace ProteinFileReader
         /// <summary>
         /// Constructor that accepts a text file path
         /// </summary>
-        /// <param name="fastaFilePath"></param>
+        /// <param name="inputFilePath"></param>
         /// <param name="fileFormat"></param>
-        public DelimitedProteinFileReader(string fastaFilePath, ProteinFileFormatCode fileFormat = ProteinFileFormatCode.ProteinName_Description_Sequence)
+        public DelimitedProteinFileReader(string inputFilePath, ProteinFileFormatCode fileFormat = ProteinFileFormatCode.ProteinName_Description_Sequence)
         {
             InitializeLocalVariables(fileFormat);
-            OpenFile(fastaFilePath);
+            var fileOpened = OpenFile(inputFilePath);
+            if (!fileOpened)
+                return;
         }
 
         #region "Constants and Enums"
