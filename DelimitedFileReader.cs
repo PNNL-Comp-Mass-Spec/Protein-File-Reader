@@ -208,7 +208,42 @@ namespace ProteinFileReader
         }
 
         /// <summary>
-        /// Reads the next entry in delimited protein (or delimited peptide) file
+        /// Open the delimited text file
+        /// </summary>
+        /// <param name="inputFilePath"></param>
+        /// <returns>True if success, false if a problem</returns>
+        public override bool OpenFile(string inputFilePath)
+        {
+            // Reset the first line tracking variable
+            mFirstLineSkipped = false;
+
+            // Call OpenFile in the base class
+            return base.OpenFile(inputFilePath);
+        }
+
+        private bool ParseNameDescriptionSequenceLine(
+            string dataLine,
+            IList<string> rowData,
+            int colIndexName,
+            int colIndexDescription,
+            int colIndexSequence)
+        {
+            // Only process the line if the sequence column is not a number (useful for handling incorrect file formats)
+            if (IsNumber(rowData[colIndexSequence]))
+                return false;
+
+            mCurrentEntry.HeaderLine = dataLine;
+            mCurrentEntry.Name = colIndexName >= 0 ? rowData[colIndexName].Trim() : string.Empty;
+            mCurrentEntry.Description = colIndexDescription >= 0 ? rowData[colIndexDescription].Trim() : string.Empty;
+
+            if (!DiscardProteinResidues)
+                mCurrentEntry.Sequence = rowData[colIndexSequence];
+
+            return true;
+        }
+
+        /// <summary>
+        /// Reads the next entry in a delimited protein (or delimited peptide) file
         /// </summary>
         /// <remarks>
         /// This function will update variable mFileLineSkipCount if any lines are skipped due to having an invalid format
@@ -392,41 +427,6 @@ namespace ProteinFileReader
             }
 
             return entryFound;
-        }
-
-        private bool ParseNameDescriptionSequenceLine(
-            string dataLine,
-            IList<string> splitLine,
-            int colIndexName,
-            int colIndexDescription,
-            int colIndexSequence)
-        {
-            // Only process the line if the sequence column is not a number (useful for handling incorrect file formats)
-            if (IsNumber(splitLine[colIndexSequence]))
-                return false;
-
-            mCurrentEntry.HeaderLine = dataLine;
-            mCurrentEntry.Name = colIndexName >= 0 ? splitLine[colIndexName].Trim() : string.Empty;
-            mCurrentEntry.Description = colIndexDescription >= 0 ? splitLine[colIndexDescription].Trim() : string.Empty;
-
-            if (!DiscardProteinResidues)
-                mCurrentEntry.Sequence = splitLine[colIndexSequence];
-
-            return true;
-        }
-
-        /// <summary>
-        /// Open the delimited text file
-        /// </summary>
-        /// <param name="inputFilePath"></param>
-        /// <returns>True if success, false if a problem</returns>
-        public override bool OpenFile(string inputFilePath)
-        {
-            // Reset the first line tracking variable
-            mFirstLineSkipped = false;
-
-            // Call OpenFile in the base class
-            return base.OpenFile(inputFilePath);
         }
     }
 }
