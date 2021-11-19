@@ -89,9 +89,10 @@ namespace ProteinFileReader
         /// The character that follows the protein name
         /// </summary>
         /// <remarks>
-        /// Should be a space, but will also match a non-breaking space (Ux00A0) and a tab
+        /// Should be a space, but we also match a non-breaking space (Ux00A0) and a tab
+        /// \xfffd (the Unicode replacement character) is included to match a non-breaking space when reading an input file that does not specify an encoding
         /// </remarks>
-        public char[] ProteinLineAccessionEndChars { get; } = { PROTEIN_LINE_ACCESSION_TERMINATOR, '\x00A0', '\t' };
+        public char[] ProteinLineAccessionEndChars { get; } = { PROTEIN_LINE_ACCESSION_TERMINATOR, '\x00A0', '\xfffd', '\t' };
 
         #endregion
 
