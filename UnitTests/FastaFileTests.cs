@@ -19,7 +19,7 @@ namespace ProteinReader_UnitTests
         [Test]
         [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta", 4437, 1357830)]
         [TestCase(@"Test_Data\E_coli_K12_UniProt_2020-10-19.fasta.gz", 4437, 1357830)]
-        [TestCase(@"Test_Data\JunkTest.fasta", 28, 7445)]
+        [TestCase(@"Test_Data\JunkTest.fasta", 30, 8739)]
         [TestCase(@"Test_Data\Tryp_Pig_Bov.fasta", 16, 4766)]
         [TestCase(@"Test_Data\H_sapiens_Uniprot_SPROT_2017-04-12_excerpt.fasta", 15, 41451)]
         public void CheckProteinStats(string fastaFile, int proteinCountExpected, int totalResidueCountExpected)
