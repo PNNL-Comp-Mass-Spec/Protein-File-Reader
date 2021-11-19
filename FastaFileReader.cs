@@ -147,7 +147,32 @@ namespace ProteinFileReader
                 var charIndex = headerLine.IndexOfAny(ProteinLineAccessionEndChars);
                 if (charIndex > 0)
                 {
-                    return headerLine.Substring(0, charIndex).Trim();
+                    var proteinName = headerLine.Substring(0, charIndex).Trim();
+
+                    if (headerLine[charIndex] == ' ')
+                    {
+                        return proteinName;
+                    }
+
+                    string characterName;
+
+                    switch (headerLine[charIndex])
+                    {
+                        case '\t':
+                            characterName = "a tab character";
+                            break;
+
+                        case '\x00A0':
+                            characterName = "a non-breaking space";
+                            break;
+
+                        default:
+                            characterName = "an unrecognized character (possibly a non-breaking space)";
+                            break;
+                    }
+
+                    Console.WriteLine("Warning: Protein '{0}' has {1} after its name", proteinName, characterName);
+                    return proteinName;
                 }
 
                 return headerLine;
