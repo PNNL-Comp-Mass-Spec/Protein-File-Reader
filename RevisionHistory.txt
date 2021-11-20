@@ -1,5 +1,10 @@
 ProteinFileReader.dll Change Log
 
+Version 3.0.2; November 19, 2021
+	- Treat the Unicode replacement character ('\xfffd') as a protein name accession delimiter
+	  - If a FASTA file does not have a BOM specifying the encoding, if a non-breaking space is present after a protein name, it will be read as the Unicode replacement character
+	- Show a warning if the protein name is followed by a tab, space, non-breaking space, or the Unicode replacement character
+
 Version 3.0.0; October 21, 2021
 	- Add a dependency to NuGet package CsvHelper
 	- Use CsvHelper to read delimited text files
