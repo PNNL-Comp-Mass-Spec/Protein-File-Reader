@@ -1,5 +1,8 @@
 ProteinFileReader.dll Change Log
 
+Version 3.0.3; January 21, 2022
+	- Update to CsvHelper 27.2.1
+
 Version 3.0.2; November 19, 2021
 	- Treat the Unicode replacement character ('\xfffd') as a protein name accession delimiter
 	  - If a FASTA file does not have a BOM specifying the encoding, if a non-breaking space is present after a protein name, it will be read as the Unicode replacement character
