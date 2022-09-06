@@ -129,10 +129,10 @@ namespace ProteinFileReader
         /// <summary>
         /// Extract the accession name from the header line by looking for mProteinLineAccessionEndChar
         /// </summary>
-        /// <param name="headerLine"></param>
         /// <remarks>
         /// HeaderLine should not start with the > character; it should have already been removed when the file was read
         /// </remarks>
+        /// <param name="headerLine"></param>
         /// <returns>Accession (protein) name</returns>
         private string ExtractAccessionNameFromHeader(string headerLine)
         {
