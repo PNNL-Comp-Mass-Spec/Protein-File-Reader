@@ -301,7 +301,14 @@ namespace ProteinFileReader
                     mCsvReader.Read();
                     mCsvReader.ReadHeader();
 
-                    var headerLine = string.Join(mDelimiter.ToString(), mCsvReader.Parser.Context.Reader.HeaderRecord);
+                    var headerNames = new List<string>();
+
+                    if (mCsvReader.Parser.Context.Reader.HeaderRecord != null)
+                    {
+                        headerNames.AddRange(mCsvReader.Parser.Context.Reader.HeaderRecord.Select(headerName => headerName ?? string.Empty));
+                    }
+
+                    var headerLine = string.Join(mDelimiter.ToString(), headerNames);
 
                     if (!string.IsNullOrWhiteSpace(headerLine))
                     {

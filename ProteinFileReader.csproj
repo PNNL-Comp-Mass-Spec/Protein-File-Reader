@@ -6,7 +6,7 @@
     <AssemblyName>ProteinFileReader</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>ProteinFileReader</PackageId>
-    <Version>3.0.3</Version>
+    <Version>3.0.4</Version>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <FileVersion>$(Version)</FileVersion>
     <Description>Readers for reading protein files, specifically FASTA files and certain tab-delimited formats</Description>
