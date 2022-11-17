@@ -163,10 +163,8 @@ namespace ProteinFileReader
                             {
                                 return mCurrentEntry.Name + mDelimiter + mCurrentEntry.Description;
                             }
-                            else
-                            {
-                                return mCurrentEntry.Name;
-                            }
+
+                            return mCurrentEntry.Name;
 
                         case ProteinFileFormatCode.UniqueID_Sequence:
                         case ProteinFileFormatCode.UniqueID_Sequence_Mass_NET:
