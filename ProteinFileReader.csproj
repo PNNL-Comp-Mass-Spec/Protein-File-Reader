@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net472;net48;netstandard2.0</TargetFrameworks>
     <RootNamespace>ProteinFileReader</RootNamespace>
     <AssemblyName>ProteinFileReader</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -40,7 +40,7 @@
     <None Remove=".gitignore" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472' OR '$(TargetFramework)' == 'net48'">
     <PackageReference Include="CsvHelper">
       <Version>27.2.1</Version>
     </PackageReference>
