@@ -17,7 +17,8 @@ namespace ProteinReader_UnitTests
         {
             var dataFile = FileRefs.GetTestFile(proteinsFile);
 
-            var reader = new DelimitedProteinFileReader(dataFile.FullName) {
+            var reader = new DelimitedProteinFileReader(dataFile.FullName)
+            {
                 SkipFirstLine = true
             };
 

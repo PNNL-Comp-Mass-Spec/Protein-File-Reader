@@ -64,11 +64,11 @@ namespace ProteinReader_UnitTests
                 string nameOrSequence;
                 if (checkName)
                 {
-                    nameOrSequence= reader.ProteinName;
+                    nameOrSequence = reader.ProteinName;
                 }
                 else
                 {
-                    nameOrSequence= reader.ProteinSequence;
+                    nameOrSequence = reader.ProteinSequence;
                 }
 
                 lastItems.Enqueue(nameOrSequence);
