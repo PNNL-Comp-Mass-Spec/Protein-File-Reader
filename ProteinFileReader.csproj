@@ -18,9 +18,14 @@
     <RepositoryType>GitHub</RepositoryType>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/PNNL-Comp-Mass-Spec/Protein-File-Reader</PackageProjectUrl>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <Copyright>Copyright @ PNNL 2021</Copyright>
     <Title>Protein File Reader</Title>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Readme.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard1.5' OR '$(TargetFramework)'=='netstandard1.6'">
     <DefineConstants>NETSTANDARD1_x</DefineConstants>
