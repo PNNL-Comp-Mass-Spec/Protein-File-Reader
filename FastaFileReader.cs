@@ -24,6 +24,8 @@ namespace ProteinFileReader
     /// </summary>
     public sealed class FastaFileReader : ProteinFileReaderBaseClass
     {
+        // Ignore Spelling: Fasta
+
         /// <summary>
         /// Constructor
         /// </summary>
