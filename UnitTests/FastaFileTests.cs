@@ -187,6 +187,7 @@ namespace ProteinReader_UnitTests
 
                 // Note that OpenFile will call CloseFile before opening the file
                 var fileOpened = reader.OpenFile(dataFile.FullName);
+
                 if (!fileOpened)
                 {
                     Assert.Fail("Input file not found: " + dataFile.FullName);
@@ -225,6 +226,7 @@ namespace ProteinReader_UnitTests
             while (reader.ReadNextProteinEntry())
             {
                 proteinsRead++;
+
                 if (proteinsRead % progressIntervalProteins > 0)
                     continue;
 
@@ -242,6 +244,7 @@ namespace ProteinReader_UnitTests
 
             var averageInterval = progressPercentIntervals.Average();
             Console.WriteLine("Average progress interval: {0:F2}%", averageInterval);
+
             if (expectedAverageProgressPercentInterval > 0)
                 Assert.AreEqual(expectedAverageProgressPercentInterval, averageInterval, 0.01);
         }

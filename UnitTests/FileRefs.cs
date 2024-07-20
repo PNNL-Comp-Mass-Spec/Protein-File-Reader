@@ -13,6 +13,7 @@ namespace ProteinReader_UnitTests
         public static FileInfo GetTestFile(string relativeFilePath)
         {
             var dataFile = new FileInfo(relativeFilePath);
+
             if (dataFile.Exists)
             {
 #if DEBUG
@@ -41,11 +42,13 @@ namespace ProteinReader_UnitTests
             if (dataFile.Directory != null)
             {
                 var parentToCheck = dataFile.Directory.Parent;
+
                 while (parentToCheck != null)
                 {
                     foreach (var relativePath in relativePathsToCheck)
                     {
                         var alternateFile = new FileInfo(Path.Combine(parentToCheck.FullName, relativePath));
+
                         if (alternateFile.Exists)
                         {
 #if DEBUG
@@ -63,6 +66,7 @@ namespace ProteinReader_UnitTests
             foreach (var relativePath in relativePathsToCheck)
             {
                 var serverPathFile = new FileInfo(Path.Combine(SHARE_PATH, relativePath));
+
                 if (serverPathFile.Exists)
                 {
 #if DEBUG

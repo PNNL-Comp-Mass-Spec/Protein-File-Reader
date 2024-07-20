@@ -111,6 +111,7 @@ namespace ProteinFileReader
                 }
 
                 var charIndex = headerLine.IndexOfAny(ProteinLineAccessionEndChars);
+
                 if (charIndex > 0)
                 {
                     description = headerLine.Substring(charIndex + 1).Trim();
@@ -147,6 +148,7 @@ namespace ProteinFileReader
                 }
 
                 var charIndex = headerLine.IndexOfAny(ProteinLineAccessionEndChars);
+
                 if (charIndex > 0)
                 {
                     var proteinName = headerLine.Substring(0, charIndex).Trim();
@@ -230,6 +232,7 @@ namespace ProteinFileReader
                 while (!proteinEntryFound && !mProteinFileInputStream.EndOfStream)
                 {
                     string lineIn;
+
                     if (!string.IsNullOrWhiteSpace(mCachedHeaderLine))
                     {
                         lineIn = string.Copy(mCachedHeaderLine);

@@ -28,7 +28,7 @@ namespace ProteinFileReader
     /// </summary>
     public abstract class ProteinFileReaderBaseClass : IDisposable
     {
-        // Ignore Spelling: gzipped
+        // Ignore Spelling: gzip, gzipped
 
         private const double GZIP_PROGRESS_SCALING_FACTOR = 0.5;
 
@@ -207,6 +207,7 @@ namespace ProteinFileReader
                     return false;
 
                 Stream fileStream;
+
                 if (Path.HasExtension(inputFilePath) &&
                     Path.GetExtension(inputFilePath).Equals(".gz", StringComparison.OrdinalIgnoreCase))
                 {
@@ -246,6 +247,7 @@ namespace ProteinFileReader
                 return 0;
 
             double scalingFactor;
+
             if (mReadingGzipFile)
             {
                 // Scale the number of bytes down by 50%; this is only an estimate of the compression ratio

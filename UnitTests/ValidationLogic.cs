@@ -62,6 +62,7 @@ namespace ProteinReader_UnitTests
             while (reader.ReadNextProteinEntry())
             {
                 string nameOrSequence;
+
                 if (checkName)
                 {
                     nameOrSequence = reader.ProteinName;
@@ -102,12 +103,14 @@ namespace ProteinReader_UnitTests
             }
 
             string itemDescription;
+
             if (checkName)
                 itemDescription = expectedFirstNamesOrSequences.Count > 1 ? "proteins" : "protein";
             else
                 itemDescription = expectedFirstNamesOrSequences.Count > 1 ? "sequences" : "sequence";
 
             Console.WriteLine("First {0} {1}", expectedFirstNamesOrSequences.Count, itemDescription);
+
             for (var i = 0; i < expectedFirstNamesOrSequences.Count; i++)
             {
                 var nameOrSequence = firstItems[i];
@@ -161,6 +164,7 @@ namespace ProteinReader_UnitTests
             while (reader.ReadNextProteinEntry())
             {
                 proteinsRead++;
+
                 if (!proteinsToFind.ContainsKey(reader.ProteinName))
                     continue;
 

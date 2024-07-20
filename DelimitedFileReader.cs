@@ -231,6 +231,7 @@ namespace ProteinFileReader
 
             // Call OpenFile in the base class
             var fileOpened = base.OpenFile(inputFilePath);
+
             if (!fileOpened)
                 return false;
 
@@ -391,6 +392,7 @@ namespace ProteinFileReader
                                 if (IsNumber(rowData[0]) && !IsNumber(rowData[1]))
                                 {
                                     entryFound = ParseNameDescriptionSequenceLine(dataLine, rowData, -1, -1, 1);
+
                                     if (!entryFound)
                                         break;
 
@@ -418,6 +420,7 @@ namespace ProteinFileReader
                                 if (IsNumber(rowData[2]) && !IsNumber(rowData[1]))
                                 {
                                     entryFound = ParseNameDescriptionSequenceLine(dataLine, rowData, 0, -1, 1);
+
                                     if (!entryFound)
                                         break;
 

@@ -157,6 +157,7 @@ namespace ProteinReader_UnitTests
             };
 
             var fileOpened = reader.OpenFile(dataFile.FullName);
+
             if (!fileOpened)
             {
                 if (!fileShouldExist)
@@ -196,6 +197,7 @@ namespace ProteinReader_UnitTests
 
                 // Note that OpenFile will call CloseFile before opening the file
                 var fileOpened = reader.OpenFile(dataFile.FullName);
+
                 if (!fileOpened)
                 {
                     Assert.Fail("Input file not found: " + dataFile.FullName);
