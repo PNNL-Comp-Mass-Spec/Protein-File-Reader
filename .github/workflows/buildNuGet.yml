@@ -52,6 +52,9 @@ jobs:
 
     - name: Push NuGet package, login
       id: login
+      permissions:
+        id-token: write
+        contents: read
       uses: NuGet/login@v1
       with:
         # Use your NuGet.org profile username (NOT your email address)
