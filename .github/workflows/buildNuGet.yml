@@ -61,4 +61,5 @@ jobs:
         user: PNNLCompMassSpec
 
     - name: Push package to NuGet.org
-      run: dotnet nuget push ./bin/Release/ProteinFileReader.*.nupkg --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+      working-directory: ./bin/Release/
+      run: dotnet nuget push ProteinFileReader.*.nupkg --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
