@@ -17,10 +17,9 @@ namespace ProteinReader_UnitTests
         {
             var dataFile = FileRefs.GetTestFile(proteinsFile);
 
-            var reader = new DelimitedProteinFileReader(dataFile.FullName)
-            {
-                SkipFirstLine = true
-            };
+            const bool hasHeaderLine = true;
+
+            var reader = new DelimitedProteinFileReader(dataFile.FullName, skipFirstLine: hasHeaderLine);
 
             ValidationLogic.CheckProteinStats(reader, proteinCountExpected, totalResidueCountExpected);
         }
@@ -47,10 +46,9 @@ namespace ProteinReader_UnitTests
         {
             var dataFile = FileRefs.GetTestFile(proteinsFile);
 
-            var reader = new DelimitedProteinFileReader(dataFile.FullName)
-            {
-                SkipFirstLine = true
-            };
+            const bool hasHeaderLine = true;
+
+            var reader = new DelimitedProteinFileReader(dataFile.FullName, skipFirstLine: hasHeaderLine);
 
             ValidationLogic.CheckProteinNamesOrSequences(reader, expectedFirstProteinNames, expectedLastProteinNames, true, nameDelimiter);
         }
@@ -82,10 +80,9 @@ namespace ProteinReader_UnitTests
         {
             var dataFile = FileRefs.GetTestFile(proteinsFile);
 
-            var reader = new DelimitedProteinFileReader(dataFile.FullName, fileFormatCode)
-            {
-                SkipFirstLine = true
-            };
+            const bool hasHeaderLine = true;
+
+            var reader = new DelimitedProteinFileReader(dataFile.FullName, fileFormatCode, skipFirstLine: hasHeaderLine);
 
             ValidationLogic.CheckProteinNamesOrSequences(reader, expectedFirstProteinSequences, expectedLastProteinSequences, false);
         }
@@ -105,10 +102,9 @@ namespace ProteinReader_UnitTests
         {
             var dataFile = FileRefs.GetTestFile(proteinsFile);
 
-            var reader = new DelimitedProteinFileReader(dataFile.FullName)
-            {
-                SkipFirstLine = false
-            };
+            const bool hasHeaderLine = true;
+
+            var reader = new DelimitedProteinFileReader(dataFile.FullName, skipFirstLine: hasHeaderLine);
 
             ValidationLogic.CheckProteinDescription(reader, proteinNames, proteinDescriptions, delimiter);
         }
@@ -128,14 +124,13 @@ namespace ProteinReader_UnitTests
         public void CheckDelimitedFileFormats(
             string proteinsFile,
             int proteinCountExpected, int totalResidueCountExpected,
-            DelimitedProteinFileReader.ProteinFileFormatCode formatCode)
+            DelimitedProteinFileReader.ProteinFileFormatCode fileFormatCode)
         {
             var dataFile = FileRefs.GetTestFile(proteinsFile);
 
-            var reader = new DelimitedProteinFileReader(dataFile.FullName, formatCode)
-            {
-                SkipFirstLine = true
-            };
+            const bool hasHeaderLine = true;
+
+            var reader = new DelimitedProteinFileReader(dataFile.FullName, fileFormatCode, skipFirstLine: hasHeaderLine);
 
             ValidationLogic.CheckProteinStats(reader, proteinCountExpected, totalResidueCountExpected);
         }
@@ -151,9 +146,11 @@ namespace ProteinReader_UnitTests
                 ? FileRefs.GetTestFile(proteinsFile)
                 : new FileInfo(proteinsFile);
 
+            const bool hasHeaderLine = true;
+
             var reader = new DelimitedProteinFileReader
             {
-                SkipFirstLine = true
+                SkipFirstLine = hasHeaderLine
             };
 
             var fileOpened = reader.OpenFile(dataFile.FullName);
@@ -181,9 +178,11 @@ namespace ProteinReader_UnitTests
         {
             var inputFiles = proteinFiles.Split(',');
 
+            const bool hasHeaderLine = true;
+
             var reader = new DelimitedProteinFileReader
             {
-                SkipFirstLine = true
+                SkipFirstLine = hasHeaderLine
             };
 
             var fileNumber = 0;
