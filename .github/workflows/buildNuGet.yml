@@ -50,9 +50,16 @@ jobs:
         name: Compiled .nupkg
         path: bin/Release/*.nupkg
 
-    - name: Push NuGet package
-      working-directory: ./bin/Release/
-      env:
-        NUGET_AUTH_TOKEN: ${{ secrets.NUGET_PNNLCOMPMASSSPEC }}
-        SOURCE_URL: https://api.nuget.org/v3/index.json
-      run: nuget push ProteinFileReader.*.nupkg -Source ${{env.SOURCE_URL}} -ApiKey ${{ env.NUGET_AUTH_TOKEN }} -SkipDuplicate
+    - name: Push NuGet package, login
+      id: login
+      uses: NuGet/login@v1
+      with:
+        # Use your NuGet.org profile username (NOT your email address)
+        user: PNNLCompMassSpec
+
+    - name: Push package to NuGet.org
+      run: >
+        dotnet nuget push "./bin/Release/ProteinFileReader.*.nupkg"
+        --api-key "${{ steps.login.outputs.NUGET_API_KEY }}"
+        --source https://api.nuget.org/v3/index.json
+        --skip-duplicate
