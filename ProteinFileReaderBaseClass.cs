@@ -28,7 +28,7 @@ namespace ProteinFileReader
     /// </summary>
     public abstract class ProteinFileReaderBaseClass : IDisposable
     {
-        // Ignore Spelling: gzip, gzipped
+        // Ignore Spelling: Dev, gzip, gzipped
 
         private const double GZIP_PROGRESS_SCALING_FACTOR = 0.5;
 

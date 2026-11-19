@@ -12,7 +12,7 @@ namespace ProteinReader_UnitTests
         // ReSharper disable CommentTypo
 
         // Ignore Spelling: acetyltransferase, coli, deaminase, fasta, iminobutanoate, iminopropanoate, isoform
-        // Ignore Spelling: neuregulin, Promega, sp, UniProt
+        // Ignore Spelling: neuregulin, Parameterless, Promega, sp, UniProt
 
         // ReSharper restore CommentTypo
 

@@ -7,7 +7,7 @@ namespace ProteinReader_UnitTests
 {
     public class DelimitedProteinFileTests
     {
-        // Ignore Spelling: Bradykinin, des, isoform, neuregulin, Promega
+        // Ignore Spelling: Bradykinin, des, isoform, neuregulin, Parameterless, Promega
 
         [Test]
         [TestCase(@"Test_Data\JunkTest.txt", 26, 7427)]

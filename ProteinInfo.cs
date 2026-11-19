@@ -7,6 +7,8 @@ namespace ProteinFileReader
     /// </summary>
     public class ProteinInfo
     {
+        // Ignore Spelling: Dev, NETStDev
+
         /// <summary>
         /// For FASTA files, the header line, including the protein header start character; for Delimited files, the entire line
         /// </summary>
