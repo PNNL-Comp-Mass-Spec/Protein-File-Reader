@@ -15,9 +15,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
+using CsvHelper;
 
 // ReSharper disable UnusedMember.Global
 
@@ -118,7 +118,7 @@ namespace ProteinFileReader
 
         #region "Class wide Variables"
 
-        private CsvHelper.CsvReader mCsvReader;
+        private CsvReader mCsvReader;
 
         private char mDelimiter;
 
@@ -257,12 +257,7 @@ namespace ProteinFileReader
                 mDelimiter = ',';
             }
 
-            var configuration = new CsvHelper.Configuration.CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                Delimiter = mDelimiter.ToString()
-            };
-
-            mCsvReader = new CsvHelper.CsvReader(mProteinFileInputStream, configuration);
+            mCsvReader = CsvReader.Create(mProteinFileInputStream, new CsvReaderOptions { HasHeader = SkipFirstLine, Separator = mDelimiter });
 
             return true;
         }
@@ -309,39 +304,36 @@ namespace ProteinFileReader
 
             try
             {
-                if (SkipFirstLine && !mFirstLineSkipped)
-                {
-                    mFirstLineSkipped = true;
-
-                    mCsvReader.Read();
-                    mCsvReader.ReadHeader();
-
-                    var headerNames = new List<string>();
-
-                    if (mCsvReader.Parser.Context.Reader.HeaderRecord != null)
-                    {
-                        headerNames.AddRange(mCsvReader.Parser.Context.Reader.HeaderRecord.Select(headerName => headerName ?? string.Empty));
-                    }
-
-                    var headerLine = string.Join(mDelimiter.ToString(), headerNames);
-
-                    if (!string.IsNullOrWhiteSpace(headerLine))
-                    {
-                        mFileBytesRead += headerLine.Length + 2;
-                        mFileLinesRead++;
-                    }
-                }
-
                 // Read the file until the next valid line is found
                 while (!entryFound && mCsvReader.Read())
                 {
+                    if (SkipFirstLine && !mFirstLineSkipped)
+                    {
+                        mFirstLineSkipped = true;
+
+                        var headerNames = new List<string>();
+
+                        if (mCsvReader.Headers.Count > 0)
+                        {
+                            headerNames.AddRange(mCsvReader.Headers);
+                        }
+
+                        var headerLine = string.Join(mDelimiter.ToString(), headerNames);
+
+                        if (!string.IsNullOrWhiteSpace(headerLine))
+                        {
+                            mFileBytesRead += headerLine.Length + 2;
+                            mFileLinesRead++;
+                        }
+                    }
+
                     mFileLinesRead++;
 
                     var rowData = new List<string>();
 
-                    for (var columnIndex = 0; columnIndex < mCsvReader.Parser.Count; columnIndex++)
+                    for (var columnIndex = 0; columnIndex < mCsvReader.FieldCount; columnIndex++)
                     {
-                        if (!mCsvReader.TryGetField<string>(columnIndex, out var fieldValue))
+                        if (!mCsvReader.TryParse<string>(columnIndex, out var fieldValue))
                         {
                             break;
                         }
