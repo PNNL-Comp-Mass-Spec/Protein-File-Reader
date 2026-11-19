@@ -25,8 +25,8 @@ namespace ProteinReader_UnitTests
             if (proteinCountExpected == 0 && totalResidueCountExpected == 0)
                 return;
 
-            Assert.AreEqual(proteinCountExpected, proteins.Count);
-            Assert.AreEqual(totalResidueCountExpected, totalResidueCount);
+            Assert.That(proteins.Count, Is.EqualTo(proteinCountExpected));
+            Assert.That(totalResidueCount, Is.EqualTo(totalResidueCountExpected));
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace ProteinReader_UnitTests
             {
                 var nameOrSequence = firstItems[i];
                 Console.WriteLine(nameOrSequence);
-                Assert.AreEqual(expectedFirstNamesOrSequences[i], nameOrSequence);
+                Assert.That(nameOrSequence, Is.EqualTo(expectedFirstNamesOrSequences[i]));
             }
 
             Console.WriteLine();
@@ -127,7 +127,7 @@ namespace ProteinReader_UnitTests
 
                 var nameOrSequence = lastItems.Dequeue();
                 Console.WriteLine(nameOrSequence);
-                Assert.AreEqual(expectedProtein, nameOrSequence);
+                Assert.That(nameOrSequence, Is.EqualTo(expectedProtein));
             }
         }
 
@@ -151,7 +151,7 @@ namespace ProteinReader_UnitTests
                 proteinDescriptionList.Clear();
             }
 
-            Assert.AreEqual(proteinNameList.Count, proteinDescriptionList.Count);
+            Assert.That(proteinDescriptionList.Count, Is.EqualTo(proteinNameList.Count));
 
             for (var i = 0; i < proteinNameList.Count; i++)
             {
@@ -189,7 +189,7 @@ namespace ProteinReader_UnitTests
                     Assert.Fail("Expected protein not found: " + expectedProtein);
 
                 Console.WriteLine(proteinName + ": " + description);
-                Assert.AreEqual(proteinDescription, description);
+                Assert.That(description, Is.EqualTo(proteinDescription));
             }
         }
     }

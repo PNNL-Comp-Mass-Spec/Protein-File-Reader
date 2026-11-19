@@ -124,7 +124,7 @@ namespace ProteinReader_UnitTests
             while (reader.ReadNextProteinEntry())
             {
                 proteinsRead++;
-                Assert.IsEmpty(reader.ProteinSequence, "Protein sequence is not empty for {0}", reader.ProteinName);
+                Assert.That(reader.ProteinSequence, Is.Empty, "Protein sequence is not empty for {0}", reader.ProteinName);
             }
 
             Console.WriteLine("Read {0} proteins from {1}", proteinsRead, dataFile.FullName);
@@ -246,7 +246,11 @@ namespace ProteinReader_UnitTests
             Console.WriteLine("Average progress interval: {0:F2}%", averageInterval);
 
             if (expectedAverageProgressPercentInterval > 0)
-                Assert.AreEqual(expectedAverageProgressPercentInterval, averageInterval, 0.01);
+            {
+                Assert.That(averageInterval,
+                    Is.InRange(expectedAverageProgressPercentInterval - 0.01, expectedAverageProgressPercentInterval + 0.01),
+                    string.Format("Average progress interval is not {0}", expectedAverageProgressPercentInterval));
+            }
         }
     }
 }
