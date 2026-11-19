@@ -8,7 +8,7 @@ build:
   project: ProteinFileReader.sln
   verbosity: minimal
 artifacts:
-- path: bin\Release\net40\ProteinFileReader.dll
+- path: bin\Release\net45\ProteinFileReader.dll
 - path: bin\Release\ProteinFileReader*.nupkg
 deploy:
 - provider: NuGet
