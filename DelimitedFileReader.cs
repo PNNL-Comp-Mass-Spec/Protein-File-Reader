@@ -39,11 +39,25 @@ namespace ProteinFileReader
         /// <summary>
         /// Constructor that accepts a text file path
         /// </summary>
-        /// <param name="inputFilePath"></param>
-        /// <param name="fileFormat"></param>
-        public DelimitedProteinFileReader(string inputFilePath, ProteinFileFormatCode fileFormat = ProteinFileFormatCode.ProteinName_Description_Sequence)
+        /// <remarks>
+        /// Assumes that the protein file format is ProteinFileFormatCode.ProteinName_Description_Sequence
+        /// </remarks>
+        /// <param name="inputFilePath">Input file path</param>
+        /// <param name="skipFirstLine">When true, skip the first line (since it is a header line)</param>
+        public DelimitedProteinFileReader(string inputFilePath, bool skipFirstLine) : this(inputFilePath, ProteinFileFormatCode.ProteinName_Description_Sequence, skipFirstLine)
+        {
+        }
+
+        /// <summary>
+        /// Constructor that accepts a text file path
+        /// </summary>
+        /// <param name="inputFilePath">Input file path</param>
+        /// <param name="fileFormat">File format</param>
+        /// <param name="skipFirstLine">When true, skip the first line (since it is a header line)</param>
+        public DelimitedProteinFileReader(string inputFilePath, ProteinFileFormatCode fileFormat, bool skipFirstLine)
         {
             InitializeLocalVariables(fileFormat);
+            SkipFirstLine = skipFirstLine;
             OpenFile(inputFilePath);
         }
 
