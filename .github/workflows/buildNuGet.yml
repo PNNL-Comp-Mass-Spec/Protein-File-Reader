@@ -14,6 +14,9 @@ env:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
     - uses: actions/checkout@v4
@@ -52,9 +55,6 @@ jobs:
 
     - name: Push NuGet package, login
       id: login
-      permissions:
-        id-token: write
-        contents: read
       uses: NuGet/login@v1
       with:
         # Use your NuGet.org profile username (NOT your email address)
