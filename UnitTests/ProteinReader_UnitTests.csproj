@@ -51,7 +51,7 @@
     <Compile Include="ValidationLogic.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ProteinFileReader.csproj">
+    <ProjectReference Include="..\ProteinFileReader\ProteinFileReader.csproj">
       <Project>{8f802155-1d9c-49b1-9b7c-a2d5ccce0bf5}</Project>
       <Name>ProteinFileReader</Name>
     </ProjectReference>

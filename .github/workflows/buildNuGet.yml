@@ -39,19 +39,19 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: Compiled binaries, .NET 4.7.2
-        path: bin/Release/net472/*.*
+        path: ProteinFileReader/bin/Release/net472/*.*
 
     - name: Archive compiled binaries for .NET 4.8
       uses: actions/upload-artifact@v7
       with:
         name: Compiled binaries, .NET 4.8
-        path: bin/Release/net48/*.*
+        path: ProteinFileReader/bin/Release/net48/*.*
 
     - name: Archive compiled .nupkg
       uses: actions/upload-artifact@v7
       with:
         name: Compiled .nupkg
-        path: bin/Release/*.nupkg
+        path: ProteinFileReader/bin/Release/*.nupkg
 
     - name: Push NuGet package, login
       id: login
@@ -61,5 +61,5 @@ jobs:
         user: PNNLCompMassSpec
 
     - name: Push package to NuGet.org
-      working-directory: ./bin/Release/
+      working-directory: ./ProteinFileReader/bin/Release/
       run: dotnet nuget push ProteinFileReader.*.nupkg --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate

@@ -25,17 +25,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Readme.md" Pack="true" PackagePath="\" />
+    <None Include="..\Readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="UnitTests\**" />
     <EmbeddedResource Remove="UnitTests\**" />
     <None Remove="UnitTests\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove=".gitignore" />
   </ItemGroup>
 
   <ItemGroup>
