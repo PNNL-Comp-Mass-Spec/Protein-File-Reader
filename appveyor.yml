@@ -12,8 +12,3 @@ artifacts:
 - path: ProteinFileReader\bin\Release\net48\ProteinFileReader.dll
 - path: ProteinFileReader\bin\Release\netstandard2.0\ProteinFileReader.dll
 - path: ProteinFileReader\bin\Release\ProteinFileReader*.nupkg
-deploy:
-- provider: NuGet
-  api_key:
-    secure: OeNUqxOixKOekWuM4Gw0kXvGOkat2lGX1YFz5ZnucUzaSn31J+253X81POP7IGrY
-  skip_symbols: false
