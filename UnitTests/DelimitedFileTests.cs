@@ -163,7 +163,7 @@ namespace ProteinReader_UnitTests
                     return;
                 }
 
-                Assert.Fail("Input file not found: " + dataFile.FullName);
+                Assert.Fail($"Input file not found: {dataFile.FullName}");
             }
 
             ValidationLogic.CheckProteinStats(reader, proteinCountExpected, totalResidueCountExpected);
@@ -199,7 +199,7 @@ namespace ProteinReader_UnitTests
 
                 if (!fileOpened)
                 {
-                    Assert.Fail("Input file not found: " + dataFile.FullName);
+                    Assert.Fail($"Input file not found: {dataFile.FullName}");
                 }
 
                 ValidationLogic.CheckProteinStats(reader, 0, 0);

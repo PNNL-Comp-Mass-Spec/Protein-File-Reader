@@ -109,7 +109,7 @@ namespace ProteinReader_UnitTests
             else
                 itemDescription = expectedFirstNamesOrSequences.Count > 1 ? "sequences" : "sequence";
 
-            Console.WriteLine("First {0} {1}", expectedFirstNamesOrSequences.Count, itemDescription);
+            Console.WriteLine($"First {expectedFirstNamesOrSequences.Count} {itemDescription}");
 
             for (var i = 0; i < expectedFirstNamesOrSequences.Count; i++)
             {
@@ -119,7 +119,7 @@ namespace ProteinReader_UnitTests
             }
 
             Console.WriteLine();
-            Console.WriteLine("Last {0} {1}", expectedLastNamesOrSequences.Count, itemDescription);
+            Console.WriteLine($"Last {expectedLastNamesOrSequences.Count} {itemDescription}");
             foreach (var expectedProtein in expectedLastNamesOrSequences)
             {
                 if (string.IsNullOrWhiteSpace(expectedProtein))
@@ -171,7 +171,7 @@ namespace ProteinReader_UnitTests
                 matchedProteinsInFile.Add(reader.ProteinName, reader.ProteinDescription);
             }
 
-            Console.WriteLine("Read {0} proteins", proteinsRead);
+            Console.WriteLine($"Read {proteinsRead} proteins");
             Console.WriteLine();
 
             if (proteinsToFind.Count == 0)
@@ -186,9 +186,11 @@ namespace ProteinReader_UnitTests
                 var proteinDescription = expectedProtein.Value;
 
                 if (!matchedProteinsInFile.TryGetValue(proteinName, out var description))
-                    Assert.Fail("Expected protein not found: " + expectedProtein);
+                {
+                    Assert.Fail($"Expected protein not found: {expectedProtein}");
+                }
 
-                Console.WriteLine(proteinName + ": " + description);
+                Console.WriteLine($"{proteinName}: {description}");
                 Assert.That(description, Is.EqualTo(proteinDescription));
             }
         }

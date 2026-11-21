@@ -124,7 +124,7 @@ namespace ProteinReader_UnitTests
             while (reader.ReadNextProteinEntry())
             {
                 proteinsRead++;
-                Assert.That(reader.ProteinSequence, Is.Empty, "Protein sequence is not empty for {0}", reader.ProteinName);
+                Assert.That(reader.ProteinSequence, Is.Empty, $"Protein sequence is not empty for {reader.ProteinName}");
             }
 
             Console.WriteLine("Read {0} proteins from {1}", proteinsRead, dataFile.FullName);
@@ -190,7 +190,7 @@ namespace ProteinReader_UnitTests
 
                 if (!fileOpened)
                 {
-                    Assert.Fail("Input file not found: " + dataFile.FullName);
+                    Assert.Fail($"Input file not found: {dataFile.FullName}");
                 }
 
                 ValidationLogic.CheckProteinStats(reader, 0, 0);
@@ -247,8 +247,7 @@ namespace ProteinReader_UnitTests
 
             if (expectedAverageProgressPercentInterval > 0)
             {
-                Assert.That(averageInterval, Is.EqualTo(expectedAverageProgressPercentInterval).Within(0.01),
-                    string.Format("Average progress interval is not {0}", expectedAverageProgressPercentInterval));
+                Assert.That(averageInterval, Is.EqualTo(expectedAverageProgressPercentInterval).Within(0.01), $"Average progress interval is not {expectedAverageProgressPercentInterval}");
             }
         }
     }

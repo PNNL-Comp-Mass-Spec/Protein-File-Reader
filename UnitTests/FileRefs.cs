@@ -17,14 +17,14 @@ namespace ProteinReader_UnitTests
             if (dataFile.Exists)
             {
 #if DEBUG
-                Console.WriteLine("Found file " + dataFile.FullName);
+                Console.WriteLine($"Found file {dataFile.FullName}");
                 Console.WriteLine();
 #endif
                 return dataFile;
             }
 
 #if DEBUG
-            Console.WriteLine("Could not find " + relativeFilePath);
+            Console.WriteLine($"Could not find {relativeFilePath}");
             Console.WriteLine("Checking alternative locations");
 #endif
 
@@ -52,7 +52,7 @@ namespace ProteinReader_UnitTests
                         if (alternateFile.Exists)
                         {
 #if DEBUG
-                            Console.WriteLine("... found at " + alternateFile.FullName);
+                            Console.WriteLine($"... found at {alternateFile.FullName}");
                             Console.WriteLine();
 #endif
                             return alternateFile;
@@ -70,7 +70,7 @@ namespace ProteinReader_UnitTests
                 if (serverPathFile.Exists)
                 {
 #if DEBUG
-                    Console.WriteLine("... found at " + serverPathFile);
+                    Console.WriteLine($"... found at {serverPathFile.FullName}");
                     Console.WriteLine();
 #endif
                     return serverPathFile;
@@ -79,7 +79,7 @@ namespace ProteinReader_UnitTests
 
             var currentDirectory = new DirectoryInfo(".");
 
-            Assert.Fail("Could not find " + relativeFilePath + "; current working directory: " + currentDirectory.FullName);
+            Assert.Fail($"Could not find {relativeFilePath}; current working directory: {currentDirectory.FullName}");
             return null;
         }
     }
