@@ -247,8 +247,7 @@ namespace ProteinReader_UnitTests
 
             if (expectedAverageProgressPercentInterval > 0)
             {
-                Assert.That(averageInterval,
-                    Is.InRange(expectedAverageProgressPercentInterval - 0.01, expectedAverageProgressPercentInterval + 0.01),
+                Assert.That(averageInterval, Is.EqualTo(expectedAverageProgressPercentInterval).Within(0.01),
                     string.Format("Average progress interval is not {0}", expectedAverageProgressPercentInterval));
             }
         }
