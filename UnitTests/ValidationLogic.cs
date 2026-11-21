@@ -19,8 +19,8 @@ namespace ProteinReader_UnitTests
                 totalResidueCount += reader.ProteinSequence.Length;
             }
 
-            Console.WriteLine("Proteins loaded: " + proteins.Count);
-            Console.WriteLine("Total residue count: " + totalResidueCount);
+            Console.WriteLine($"Proteins loaded: {proteins.Count}");
+            Console.WriteLine($"Total residue count: {totalResidueCount}");
 
             if (proteinCountExpected == 0 && totalResidueCountExpected == 0)
                 return;
@@ -56,8 +56,10 @@ namespace ProteinReader_UnitTests
             var firstItems = new List<string>();
             var lastItems = new Queue<string>();
 
-            var firstItemsToStore = expectedFirstNamesOrSequences.Count == 0 ? 5 : expectedFirstNamesOrSequences.Count;
-            var lastItemsToStore = expectedLastNamesOrSequences.Count == 0 ? 5 : expectedLastNamesOrSequences.Count;
+            var firstLastItemsToShow = 5;
+
+            var firstItemsToStore = expectedFirstNamesOrSequences.Count == 0 ? firstLastItemsToShow : expectedFirstNamesOrSequences.Count;
+            var lastItemsToStore = expectedLastNamesOrSequences.Count == 0 ? firstLastItemsToShow : expectedLastNamesOrSequences.Count;
 
             while (reader.ReadNextProteinEntry())
             {
@@ -86,14 +88,14 @@ namespace ProteinReader_UnitTests
             if (expectedFirstNamesOrSequences.Count == 0 && expectedLastNamesOrSequences.Count == 0)
             {
                 Console.WriteLine();
-                Console.WriteLine("First {0} proteins", 5);
+                Console.WriteLine($"First {firstLastItemsToShow} proteins");
                 foreach (var nameOrSequence in firstItems)
                 {
                     Console.WriteLine(nameOrSequence);
                 }
 
                 Console.WriteLine();
-                Console.WriteLine("Last {0} proteins", 5);
+                Console.WriteLine($"Last {firstLastItemsToShow} proteins");
                 foreach (var nameOrSequence in lastItems)
                 {
                     Console.WriteLine(nameOrSequence);
